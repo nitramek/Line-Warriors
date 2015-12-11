@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.nitramek.linewarriors.game.GameRenderer;
+import cz.nitramek.linewarriors.game.shaders.ShaderConstants;
 import cz.nitramek.linewarriors.game.shaders.ShaderInitiator;
 import cz.nitramek.linewarriors.util.AssetLoader;
 
@@ -35,9 +36,10 @@ public class GameActivity extends Activity {
                 String vertexShader = AssetLoader.loadText(super.getAssets(), "shaders/normal.vert");
                 String fragmentShader = AssetLoader.loadText(super.getAssets(), "shaders/normal.frag");
                 List<String> attributes = new ArrayList<>(1);
-                attributes.add("position");
+                attributes.add(ShaderConstants.POSITION);
 
-                List<String> uniforms = new ArrayList<>(0);
+                List<String> uniforms = new ArrayList<>();
+                uniforms.add(ShaderConstants.MODEL_MATRIX);
 
                 mGLSurfaceView.setRenderer(new GameRenderer(new ShaderInitiator(vertexShader, fragmentShader, attributes, uniforms)));
             } catch (IOException e) {

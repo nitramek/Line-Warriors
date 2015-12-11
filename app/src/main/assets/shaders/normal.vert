@@ -1,7 +1,8 @@
 attribute vec2 position;
 
 
+uniform mat4 ModelMatrix;
 
 void main(){
-    gl_Position = vec4(position, 0, 1.0);
+    gl_Position = ModelMatrix * vec4(position, 0, 1.0);
 }
