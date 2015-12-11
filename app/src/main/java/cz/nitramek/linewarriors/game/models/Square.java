@@ -27,13 +27,18 @@ public class Square implements Drawable {
     private final FloatBuffer verticesBuffer;
 
     private final int bytesPerFloat = 4;
+    private final int[] textureId;
+    private float[] modelMatrix;
 
-    public Square() {
+    public Square(int[] textureId) {
+        this.textureId = textureId;
         this.verticesBuffer =
                 ByteBuffer.allocateDirect(vertices.length * bytesPerFloat)
                         .order(ByteOrder.nativeOrder())
                         .asFloatBuffer();
         this.verticesBuffer.put(this.vertices).position(0);
+        modelMatrix = new float[16];
+        Matrix.setIdentityM(modelMatrix, 0);
     }
 
 
@@ -44,9 +49,10 @@ public class Square implements Drawable {
         final int positionHandle = shader.getAttributeHandle(ShaderConstants.POSITION);
         GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 2 * bytesPerFloat, verticesBuffer);
         GLES20.glEnableVertexAttribArray(positionHandle);
-        float[] modelMatrix = new float[16];
-        Matrix.setIdentityM(modelMatrix, 0);
+
+//        Matrix.translateM(modelMatrix, 0, 0.005f, 0.005f, 0f);
         GLES20.glUniformMatrix4fv(shader.getUniformHandle(ShaderConstants.MODEL_MATRIX), 1, false, modelMatrix, 0);
+        GLES20.glUniform1i(shader.getUniformHandle(ShaderConstants.TEXTURE_UNIT), 0);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
     }
 }

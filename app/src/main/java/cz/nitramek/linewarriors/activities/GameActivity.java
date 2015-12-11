@@ -40,8 +40,9 @@ public class GameActivity extends Activity {
 
                 List<String> uniforms = new ArrayList<>();
                 uniforms.add(ShaderConstants.MODEL_MATRIX);
+                uniforms.add(ShaderConstants.TEXTURE_UNIT);
 
-                mGLSurfaceView.setRenderer(new GameRenderer(new ShaderInitiator(vertexShader, fragmentShader, attributes, uniforms)));
+                mGLSurfaceView.setRenderer(new GameRenderer(this, new ShaderInitiator(vertexShader, fragmentShader, attributes, uniforms)));
             } catch (IOException e) {
                 Log.e(GameActivity.class.getName(), "Error in creating/loading shaders", e);
             }
