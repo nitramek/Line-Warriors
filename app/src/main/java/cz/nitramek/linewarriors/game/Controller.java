@@ -11,8 +11,6 @@ public class Controller implements View.OnTouchListener {
     boolean loaded = false;
     private Sprite mainCharacter;
 
-    private boolean pressed;
-
     private float widthMinTreshold;
     private float widthMaxTreshold;
 

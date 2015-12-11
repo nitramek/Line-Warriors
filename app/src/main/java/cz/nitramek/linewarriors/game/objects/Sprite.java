@@ -24,6 +24,9 @@ public class Sprite implements Drawable {
     private int maxSpriteY;
     private float speed;
 
+    private int changeSprite = 0;
+    private int changeSpriteTreshold = 5;
+
 
     public Sprite(Square square, int maxSpriteX, int maxSpriteY, int textureId) {
         this(square, maxSpriteX, maxSpriteY, textureId, new ModelMatrix());
@@ -48,29 +51,22 @@ public class Sprite implements Drawable {
         square.draw(shader, this.spriteX, this.spriteY, maxSpriteX, maxSpriteY, textureId, modelMatrix);
     }
 
+
     public void moveUp() {
-        this.modelMatrix.translate(0.f, this.speed);
-        //sprite is situated so first line is facing upwards
-        this.spriteY = UP_DIRECTION;
-        this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+        this.move(0, 1);
+
     }
 
     public void moveDown() {
-        this.modelMatrix.translate(0.f, -this.speed);
-        this.spriteY = DOWN_DIRECTION;
-        this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+        this.move(0, -1);
     }
 
     public void moveLeft() {
-        this.modelMatrix.translate(-this.speed, 0);
-        this.spriteY = LEFT_DIRECTION;
-        this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+        this.move(-1, 0);
     }
 
     public void moveRight() {
-        this.modelMatrix.translate(this.speed, 0);
-        this.spriteY = RIGHT_DIRECTION;
-        this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+        this.move(1, 0);
     }
 
     /**
@@ -93,6 +89,10 @@ public class Sprite implements Drawable {
         if (y < 0) {
             this.spriteY = DOWN_DIRECTION;
         }
-        this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+        if (this.changeSprite > this.changeSpriteTreshold) {
+            this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
+            this.changeSprite = 0;
+        }
+        this.changeSprite++;
     }
 }

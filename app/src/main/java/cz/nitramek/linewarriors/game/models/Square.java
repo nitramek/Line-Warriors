@@ -15,41 +15,39 @@ public class Square {
 
 
     private final float[] vertices = {
-            -0.5f, 0.5f, //vlevo nahoře
-            0.5f, -0.5f, //vpravo dole
-            -0.5f, -0.5f, //vlevo dole
+            -1f, 1f, //vlevo nahoře
+            1f, -1f, //vpravo dole
+            -1f, -1f, //vlevo dole
 
-            0.5f, -0.5f, //vpravo dole
-            -0.5f, 0.5f, //vlevo nahoře
-            0.5f, 0.5f, //vpravo nahoře
-    };
-    private final float[] uvs = {
-            0.0f, 1.0f / 4,
-            1.0f / 4, 0.0f,
-            0.0f, 0.0f,
-
-            1.0f / 4, 0.f,
-            0.f, 1.0f / 4,
-            1.0f / 4, 1.0f / 4,
-
-
+            1f, -1f, //vpravo dole
+            -1f, 1f, //vlevo nahoře
+            1f, 1f, //vpravo nahoře
     };
     private final FloatBuffer verticesBuffer;
     private final int bytesPerFloat = 4;
     private FloatBuffer uvsBuffer;
 
 
-    public Square() {
+    public Square(int spriteCount) {
         this.verticesBuffer =
                 ByteBuffer.allocateDirect(vertices.length * bytesPerFloat)
                         .order(ByteOrder.nativeOrder())
                         .asFloatBuffer();
         this.verticesBuffer.put(this.vertices).position(0);
+        float[] uvs = new float[]{
+                0.0f, 1.0f / spriteCount,
+                1.0f / spriteCount, 0.0f,
+                0.0f, 0.0f,
+
+                1.0f / spriteCount, 0.f,
+                0.f, 1.0f / spriteCount,
+                1.0f / spriteCount, 1.0f / spriteCount,
+        };
         this.uvsBuffer =
                 ByteBuffer.allocateDirect(uvs.length * bytesPerFloat)
                         .order(ByteOrder.nativeOrder())
                         .asFloatBuffer();
-        this.uvsBuffer.put(this.uvs).position(0);
+        this.uvsBuffer.put(uvs).position(0);
     }
 
     public void draw(final Shader shader,

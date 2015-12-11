@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.nitramek.linewarriors.game.models.Square;
+import cz.nitramek.linewarriors.game.objects.Drawable;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.shaders.ShaderConstants;
 import cz.nitramek.linewarriors.game.shaders.ShaderInitiator;
@@ -92,12 +93,18 @@ public class GameView extends GLSurfaceView implements GameRenderer.OnInitiation
     @Override
     public void rendererInitiated() {
         Log.d(GameView.class.getName(), "renderInitiated");
-        final Square square = new Square();
-        mainCharacter = new Sprite(square, 4, 4, loadTexture(this.getContext(), "drawable/redmage_m"));
+        final Square square = new Square(1);
+        Drawable background = new Sprite(square, 1, 1, loadTexture(this.getContext(), "drawable/background"));
+        this.renderer.add(background);
 
-        mainCharacter.getModelMatrix().scale(0.35f, 0.35f * this.renderer.getRatio());
+        final Square square4 = new Square(4);
+        mainCharacter = new Sprite(square4, 4, 4, loadTexture(this.getContext(), "drawable/redmage_m"));
+
+        mainCharacter.getModelMatrix().scale(0.15f, 0.15f * this.renderer.getRatio());
         controller = new Controller(mainCharacter);
         this.setOnTouchListener(controller);
+
+
         this.renderer.add(mainCharacter);
     }
 }
