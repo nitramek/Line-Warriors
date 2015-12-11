@@ -2,21 +2,13 @@ package cz.nitramek.linewarriors.activities;
 
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import cz.nitramek.linewarriors.game.GameRenderer;
-import cz.nitramek.linewarriors.game.shaders.ShaderConstants;
-import cz.nitramek.linewarriors.game.shaders.ShaderInitiator;
-import cz.nitramek.linewarriors.util.AssetLoader;
+import cz.nitramek.linewarriors.game.GameView;
 
 public class GameActivity extends Activity {
 
@@ -26,33 +18,11 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mGLSurfaceView = new GLSurfaceView(this);
-
-        final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        if (configurationInfo.reqGlEsVersion >= 0x20000) {
-            mGLSurfaceView.setEGLContextClientVersion(2);
-            try {
-                String vertexShader = AssetLoader.loadText(super.getAssets(), "shaders/normal.vert");
-                String fragmentShader = AssetLoader.loadText(super.getAssets(), "shaders/normal.frag");
-                List<String> attributes = new ArrayList<>(1);
-                attributes.add(ShaderConstants.POSITION);
-                attributes.add(ShaderConstants.TEXTURE_UV);
-
-                List<String> uniforms = new ArrayList<>();
-                uniforms.add(ShaderConstants.MODEL_MATRIX);
-                uniforms.add(ShaderConstants.TEXTURE_UNIT);
-                uniforms.add(ShaderConstants.X_SPRITE);
-                uniforms.add(ShaderConstants.Y_SPRITE);
-
-                mGLSurfaceView.setRenderer(new GameRenderer(this, new ShaderInitiator(vertexShader, fragmentShader, attributes, uniforms)));
-            } catch (IOException e) {
-                Log.e(GameActivity.class.getName(), "Error in creating/loading shaders", e);
-            }
-
-
-        } else {
-            finish();
+        try {
+            mGLSurfaceView = new GameView(this);
+        } catch (IOException e) {
+            Log.e(GameActivity.class.getName(), "Error in loading shaders", e);
+            this.finish();
         }
         setContentView(mGLSurfaceView);
     }

@@ -30,12 +30,12 @@ public class ModelMatrix {
         Matrix.multiplyMM(this.values, 0, this.values, 0, this.translateMatrix, 0);
     }
 
-    public void translate(int x, int y) {
+    public void translate(float x, float y) {
         Matrix.translateM(translateMatrix, 0, x, y, 0);
         this.recount();
     }
 
-    public void rotate(float angle, int x, int y) {
+    public void rotate(float angle, float x, float y) {
         Matrix.rotateM(rotateMatrix, 0, angle, x, y, 0);
         this.recount();
     }
