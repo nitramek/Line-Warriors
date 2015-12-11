@@ -37,10 +37,13 @@ public class GameActivity extends Activity {
                 String fragmentShader = AssetLoader.loadText(super.getAssets(), "shaders/normal.frag");
                 List<String> attributes = new ArrayList<>(1);
                 attributes.add(ShaderConstants.POSITION);
+                attributes.add(ShaderConstants.TEXTURE_UV);
 
                 List<String> uniforms = new ArrayList<>();
                 uniforms.add(ShaderConstants.MODEL_MATRIX);
                 uniforms.add(ShaderConstants.TEXTURE_UNIT);
+                uniforms.add(ShaderConstants.X_SPRITE);
+                uniforms.add(ShaderConstants.Y_SPRITE);
 
                 mGLSurfaceView.setRenderer(new GameRenderer(this, new ShaderInitiator(vertexShader, fragmentShader, attributes, uniforms)));
             } catch (IOException e) {

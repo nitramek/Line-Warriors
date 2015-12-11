@@ -40,6 +40,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             this.shader = shaderInitiator.compileLinkAndGetShader();
             this.shader.useShader();
 
+            GLES20.glEnable(GLES20.GL_BLEND);
+            GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             int[] textureId = new int[1];
             GLES20.glGenTextures(1, textureId, 0);
