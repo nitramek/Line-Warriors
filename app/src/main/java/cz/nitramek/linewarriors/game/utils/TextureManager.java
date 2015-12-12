@@ -58,6 +58,9 @@ public class TextureManager {
 
     public void setContext(Context context) {
         this.context = context;
+        for (TextureKey key : TextureKey.values()) {
+            this.addTexture(key, key.resourcePath);
+        }
     }
 
     public void addTexture(TextureKey key, int textureId) {

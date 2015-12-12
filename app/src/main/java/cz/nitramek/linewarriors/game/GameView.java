@@ -68,8 +68,6 @@ public class GameView extends GLSurfaceView {
 
         final TextureManager textureManager = TextureManager.getInstance();
         textureManager.setContext(this.getContext());
-        textureManager.addTexture(TextureKey.BACKGROUND, "drawable/background");
-        textureManager.addTexture(TextureKey.MAGE, "drawable/redmage_m");
 
         Drawable background = new Sprite(new Square(1), 1, 1, textureManager.getTextureId(TextureKey.BACKGROUND));
         this.renderer.add(background);

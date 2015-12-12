@@ -1,17 +1,22 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
-public class Enemy {
+public class Enemy extends Model {
     private int damage;
     private int health;
     private Sprite sprite;
 
 
-    public Enemy(int damage, int health) {
+    public Enemy(int damage, int health, Sprite sprite) {
+        super(sprite);
         this.damage = damage;
         this.health = health;
     }
 
+    @Override
+    public float getSpeed() {
+        return 0.05f;
+    }
 
 
 }
