@@ -40,9 +40,9 @@ public abstract class Model {
 
     }
 
-    public boolean collide(RectF boundBox) {
+    public boolean collide(Model other) {
         final RectF boundingBox = this.sprite.getModelMatrix().getBoundingBox();
-        return boundBox.contains(boundingBox);
+        return other.sprite.getModelMatrix().getBoundingBox().contains(boundingBox);
     }
 
     public abstract float getSpeed();

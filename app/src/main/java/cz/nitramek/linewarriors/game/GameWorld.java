@@ -13,6 +13,7 @@ import cz.nitramek.linewarriors.game.utils.Vector;
  * Must be instantiated
  */
 public class GameWorld implements Runnable {
+    public static final float LINE_Y = -0.75f;
     private final GameRendererListener listener;
     /**
      * Reprezents enemies in line, one enemy per given width
@@ -31,12 +32,14 @@ public class GameWorld implements Runnable {
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
-        this.enemies = new Enemy[10];
+        this.enemies = new Enemy[3];
         this.square4 = new Square(4);
         final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
         mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
         this.mainCharacter = new MainCharacter(mainCharacterSprite);
         this.listener.addDrawable(mainCharacterSprite);
+        this.addEnemy();
+        this.addEnemy();
         this.addEnemy();
         this.worldThread = new Thread(this);
         this.worldThread.setDaemon(true);
@@ -48,7 +51,7 @@ public class GameWorld implements Runnable {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
             final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.JENOVA));
-            enemySprite.getModelMatrix().translate(0f, 0.5f);
+            enemySprite.getModelMatrix().translate(-0.75f / 0.15f + freeIndex * 0.75f / 0.22f, 1.3f / 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
             Enemy e = new Enemy(5, 10, enemySprite);
             enemies[freeIndex] = e;
@@ -75,9 +78,16 @@ public class GameWorld implements Runnable {
     public void run() {
         running = true;
         while (running) {
-            for (Enemy e : enemies) {
+            for (int i = 0; i < enemies.length; i++) {
+                Enemy e = enemies[i];
                 if (e != null) {
-                    e.move(new Vector(0f, -1f));
+                    if (!e.collide(mainCharacter)) {
+                        e.move(new Vector(0f, -1f));
+                    }
+                    if (e.behindLine(LINE_Y)) {
+                        e.requestRemoval();
+                        enemies[i] = null;
+                    }
                 }
             }
             try {
