@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -60,8 +61,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-        for (Drawable drawable : drawables) {
+        final Iterator<Drawable> iterator = this.drawables.iterator();
+        while (iterator.hasNext()) {
+            final Drawable drawable = iterator.next();
+            if (drawable.shouldBeRemoved()) {
+                iterator.remove();
+                break;
+            }
             drawable.draw(this.shader);
+
         }
         this.gameView.requestRender();
     }

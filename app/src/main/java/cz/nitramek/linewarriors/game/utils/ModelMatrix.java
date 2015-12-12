@@ -12,6 +12,7 @@ public class ModelMatrix {
     private float scaleMatrix[] = new float[16];
     private float rotateMatrix[] = new float[16];
 
+    private float boundingBox[] = new float[4];
     /**
      * Holds the real values of model matrix
      */
@@ -25,18 +26,15 @@ public class ModelMatrix {
         Matrix.setIdentityM(values, 0);
     }
 
-    public void recount() {
+    public synchronized void recount() {
         Matrix.multiplyMM(this.values, 0, this.rotateMatrix, 0, this.scaleMatrix, 0);
         Matrix.multiplyMM(this.values, 0, this.values, 0, this.translateMatrix, 0);
     }
 
     public void translate(float x, float y) {
         //TODO check boundaries relative to object width/height
-        //boundaries check
-        if (this.getX() > -0.95 && this.getX() < 0.95 && this.getY() > -0.95 && this.getY() < 0.95) {
-            Matrix.translateM(translateMatrix, 0, x, y, 0);
-            this.recount();
-        }
+        Matrix.translateM(translateMatrix, 0, x, y, 0);
+        this.recount();
 
 
     }
@@ -44,12 +42,25 @@ public class ModelMatrix {
     /**
      * Calculates current X relative to scale
      */
-    private float getX() {
+    private float getRelativeX() {
         return this.translateMatrix[12] * this.scaleMatrix[0];
     }
 
-    private float getY() {
+    private float getRelativeY() {
         return this.translateMatrix[13] * this.scaleMatrix[5];
+    }
+
+    public float[] getBoundingBox() {
+        //horni levy X
+        this.boundingBox[0] = (this.translateMatrix[12] - 0.5f) * this.scaleMatrix[0];
+        //horni levy Y
+        this.boundingBox[1] = (this.translateMatrix[13] - 0.5f) * this.scaleMatrix[5];
+        //dolni pravy X
+        this.boundingBox[2] = (this.translateMatrix[12] + 0.5f) * this.scaleMatrix[0];
+        //dolni pravy Y
+        this.boundingBox[3] = (this.translateMatrix[13] + 0.5f) * this.scaleMatrix[5];
+
+        return this.boundingBox;
     }
 
     //12 x
@@ -69,5 +80,9 @@ public class ModelMatrix {
 
     public float[] getValues() {
         return values;
+    }
+
+    public void translate(Vector direction) {
+        this.translate(direction.x(), direction.y());
     }
 }

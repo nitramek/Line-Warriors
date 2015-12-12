@@ -1,4 +1,4 @@
-package cz.nitramek.linewarriors.game.models;
+package cz.nitramek.linewarriors.game.objects;
 
 
 import android.opengl.GLES20;

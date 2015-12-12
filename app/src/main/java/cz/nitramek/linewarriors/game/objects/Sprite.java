@@ -1,7 +1,6 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
-import cz.nitramek.linewarriors.game.models.Square;
 import cz.nitramek.linewarriors.game.shaders.Shader;
 import cz.nitramek.linewarriors.game.utils.ModelMatrix;
 
@@ -15,17 +14,19 @@ public class Sprite implements Drawable {
     private final int textureId;
     private Square square;
 
-    private ModelMatrix modelMatrix;
 
     private int spriteX;
     private int spriteY;
 
     private int maxSpriteX;
     private int maxSpriteY;
-    private float speed;
 
     private int changeSprite = 0;
     private int changeSpriteTreshold = 5;
+
+    private ModelMatrix modelMatrix;
+
+    private boolean remove;
 
 
     public Sprite(Square square, int maxSpriteX, int maxSpriteY, int textureId) {
@@ -37,8 +38,8 @@ public class Sprite implements Drawable {
         this.maxSpriteX = maxSpriteX;
         this.maxSpriteY = maxSpriteY;
         this.textureId = textureId;
-        this.modelMatrix = new ModelMatrix();
-        speed = 0.05f;
+        this.remove = false;
+        this.modelMatrix = modelMatrix;
     }
 
 
@@ -51,44 +52,21 @@ public class Sprite implements Drawable {
         square.draw(shader, this.spriteX, this.spriteY, maxSpriteX, maxSpriteY, textureId, modelMatrix);
     }
 
-
-    public void moveUp() {
-        this.move(0, 1);
-
+    @Override
+    public boolean shouldBeRemoved() {
+        return remove;
     }
 
-    public void moveDown() {
-        this.move(0, -1);
+
+    public void setRemove(boolean remove) {
+        this.remove = remove;
     }
 
-    public void moveLeft() {
-        this.move(-1, 0);
+    public void setSpriteY(int spriteY) {
+        this.spriteY = spriteY;
     }
 
-    public void moveRight() {
-        this.move(1, 0);
-    }
-
-    /**
-     * Moves character to given direction
-     *
-     * @param x should be 1,-1 or 0
-     * @param y should be 1,-1 or 0
-     */
-    public void move(int x, int y) {
-        this.modelMatrix.translate(this.speed * x, this.speed * y);
-        if (x > 0) {
-            this.spriteY = RIGHT_DIRECTION;
-        }
-        if (x < 0) {
-            this.spriteY = LEFT_DIRECTION;
-        }
-        if (y > 0) {
-            this.spriteY = UP_DIRECTION;
-        }
-        if (y < 0) {
-            this.spriteY = DOWN_DIRECTION;
-        }
+    public void incrementX() {
         if (this.changeSprite > this.changeSpriteTreshold) {
             this.spriteX = (this.spriteX + 1) % this.maxSpriteX;
             this.changeSprite = 0;

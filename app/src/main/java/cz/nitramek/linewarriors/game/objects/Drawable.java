@@ -5,4 +5,5 @@ import cz.nitramek.linewarriors.game.shaders.Shader;
 public interface Drawable {
 
     void draw(Shader shader);
+    boolean shouldBeRemoved();
 }
