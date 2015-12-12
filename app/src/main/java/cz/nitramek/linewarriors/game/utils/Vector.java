@@ -78,5 +78,9 @@ public class Vector {
             return 0;
         }
     }
+    public void revert(){
+        this.values[0] = -this.values[0];
+        this.values[1] = -this.values[1];
+    }
 }
 

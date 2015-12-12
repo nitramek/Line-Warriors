@@ -1,6 +1,7 @@
 package cz.nitramek.linewarriors.game.utils;
 
 
+import android.graphics.RectF;
 import android.opengl.Matrix;
 
 public class ModelMatrix {
@@ -12,7 +13,7 @@ public class ModelMatrix {
     private float scaleMatrix[] = new float[16];
     private float rotateMatrix[] = new float[16];
 
-    private float boundingBox[] = new float[4];
+    private RectF boundingBox = new RectF();
     /**
      * Holds the real values of model matrix
      */
@@ -50,15 +51,15 @@ public class ModelMatrix {
         return this.translateMatrix[13] * this.scaleMatrix[5];
     }
 
-    public float[] getBoundingBox() {
+    public RectF getBoundingBox() {
         //horni levy X
-        this.boundingBox[0] = (this.translateMatrix[12] - 0.5f) * this.scaleMatrix[0];
+        this.boundingBox.left = (this.translateMatrix[12] - 0.5f) * this.scaleMatrix[0];
         //horni levy Y
-        this.boundingBox[1] = (this.translateMatrix[13] - 0.5f) * this.scaleMatrix[5];
+        this.boundingBox.top = (this.translateMatrix[13] + 0.5f) * this.scaleMatrix[5];
         //dolni pravy X
-        this.boundingBox[2] = (this.translateMatrix[12] + 0.5f) * this.scaleMatrix[0];
+        this.boundingBox.right = (this.translateMatrix[12] + 0.5f) * this.scaleMatrix[0];
         //dolni pravy Y
-        this.boundingBox[3] = (this.translateMatrix[13] + 0.5f) * this.scaleMatrix[5];
+        this.boundingBox.bottom = (this.translateMatrix[13] - 0.5f) * this.scaleMatrix[5];
 
         return this.boundingBox;
     }

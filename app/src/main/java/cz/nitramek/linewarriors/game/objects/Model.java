@@ -1,19 +1,18 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
-import cz.nitramek.linewarriors.game.utils.ModelMatrix;
+import android.graphics.RectF;
+
 import cz.nitramek.linewarriors.game.utils.SpriteDirection;
 import cz.nitramek.linewarriors.game.utils.Vector;
 
 public abstract class Model {
 
     protected Sprite sprite;
-    protected ModelMatrix modelMatrix;
 
 
     public Model(Sprite sprite) {
         this.sprite = sprite;
-        this.modelMatrix = new ModelMatrix();
     }
 
     /**
@@ -36,12 +35,21 @@ public abstract class Model {
             this.sprite.setSpriteY(SpriteDirection.RIGHT.row);
         }
         direction.multiply(this.getSpeed());
-        this.sprite.getModelMatrix().translate (direction);
+        this.sprite.getModelMatrix().translate(direction);
         this.sprite.incrementX();
 
     }
 
+    public boolean collide(RectF boundBox) {
+        final RectF boundingBox = this.sprite.getModelMatrix().getBoundingBox();
+        return boundBox.contains(boundingBox);
+    }
+
     public abstract float getSpeed();
+
+    public void requestRemoval() {
+        this.sprite.setRemove(true);
+    }
 
 
 }
