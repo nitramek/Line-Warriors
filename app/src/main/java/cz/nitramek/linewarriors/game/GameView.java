@@ -1,11 +1,7 @@
 package cz.nitramek.linewarriors.game;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -14,21 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.nitramek.linewarriors.game.objects.Drawable;
-import cz.nitramek.linewarriors.game.objects.MainCharacter;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
 import cz.nitramek.linewarriors.game.shaders.ShaderConstants;
 import cz.nitramek.linewarriors.game.shaders.ShaderInitiator;
+import cz.nitramek.linewarriors.game.utils.TextureKey;
+import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.util.AssetLoader;
 
 
-public class GameView extends GLSurfaceView implements GameRenderer.OnInitiation {
+public class GameView extends GLSurfaceView {
     private final GameRenderer renderer;
 
     private Controller controller;
 
 
     private Sprite mainCharacter;
+    private GameWorld world;
 
 
     public GameView(Context context) throws IOException {
@@ -57,33 +55,6 @@ public class GameView extends GLSurfaceView implements GameRenderer.OnInitiation
         this.setRenderMode(RENDERMODE_WHEN_DIRTY);
     }
 
-    private static int loadTexture(Context context, String name) {
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        int[] textureId = new int[1];
-        GLES20.glGenTextures(1, textureId, 0);
-        int id = context.getResources().getIdentifier(name, null, context.getPackageName());
-        final BitmapFactory.Options opts = new BitmapFactory.Options();
-        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), id, opts);
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId[0]);
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_CLAMP_TO_EDGE);
-
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
-
-
-        bmp.recycle();
-        return textureId[0];
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -91,22 +62,21 @@ public class GameView extends GLSurfaceView implements GameRenderer.OnInitiation
         Log.d(GameView.class.getName(), "SurfaceCreated");
     }
 
-    @Override
     public void rendererInitiated() {
         Log.d(GameView.class.getName(), "renderInitiated");
-        final Square square = new Square(1);
-        Drawable background = new Sprite(square, 1, 1, loadTexture(this.getContext(), "drawable/background"));
+
+
+        final TextureManager textureManager = TextureManager.getInstance();
+        textureManager.setContext(this.getContext());
+        textureManager.addTexture(TextureKey.BACKGROUND, "drawable/background");
+        textureManager.addTexture(TextureKey.MAGE, "drawable/redmage_m");
+
+        Drawable background = new Sprite(new Square(1), 1, 1, textureManager.getTextureId(TextureKey.BACKGROUND));
         this.renderer.add(background);
 
-        final Square square4 = new Square(4);
-        final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, loadTexture(this.getContext(), "drawable/redmage_m"));
-        mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.renderer.getRatio());
-        MainCharacter mainCharacter = new MainCharacter(mainCharacterSprite);
 
-        controller = new Controller(mainCharacter);
+        world = new GameWorld(this.renderer);
+        controller = new Controller(this.world.getMainCharacter());
         this.setOnTouchListener(controller);
-
-
-        this.renderer.add(mainCharacterSprite);
     }
 }

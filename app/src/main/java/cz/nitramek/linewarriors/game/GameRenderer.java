@@ -15,8 +15,9 @@ import cz.nitramek.linewarriors.game.objects.Drawable;
 import cz.nitramek.linewarriors.game.shaders.Shader;
 import cz.nitramek.linewarriors.game.shaders.ShaderException;
 import cz.nitramek.linewarriors.game.shaders.ShaderInitiator;
+import cz.nitramek.linewarriors.game.utils.GameRendererListener;
 
-public class GameRenderer implements GLSurfaceView.Renderer {
+public class GameRenderer implements GLSurfaceView.Renderer, GameRendererListener {
 
     private final GameView gameView;
     private List<Drawable> drawables;
@@ -78,11 +79,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         return drawables.add(object);
     }
 
+    @Override
     public float getRatio() {
         return ratio;
     }
 
-    interface OnInitiation {
-        void rendererInitiated();
+    @Override
+    public void addDrawable(Drawable drawable) {
+        this.add(drawable);
     }
 }
