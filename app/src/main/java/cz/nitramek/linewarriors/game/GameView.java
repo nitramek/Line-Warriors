@@ -77,4 +77,8 @@ public class GameView extends GLSurfaceView {
         controller = new Controller(this.world.getMainCharacter());
         this.setOnTouchListener(controller);
     }
+
+    public GameWorld getWorld() {
+        return world;
+    }
 }

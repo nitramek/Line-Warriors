@@ -53,13 +53,13 @@ public class ModelMatrix {
 
     public RectF getBoundingBox() {
         //horni levy X
-        this.boundingBox.left = (this.translateMatrix[12] - 0.5f) * this.scaleMatrix[0];
+        this.boundingBox.left = this.values[12] - (0.5f * this.scaleMatrix[0]);
         //horni levy Y
-        this.boundingBox.top = (this.translateMatrix[13] + 0.5f) * this.scaleMatrix[5];
+        this.boundingBox.top = this.values[13] + (0.5f * this.scaleMatrix[5]);
         //dolni pravy X
-        this.boundingBox.right = (this.translateMatrix[12] + 0.5f) * this.scaleMatrix[0];
+        this.boundingBox.right = this.values[12] + (0.5f * this.scaleMatrix[0]);
         //dolni pravy Y
-        this.boundingBox.bottom = (this.translateMatrix[13] - 0.5f) * this.scaleMatrix[5];
+        this.boundingBox.bottom = this.values[13] - (0.5f * this.scaleMatrix[5]);
 
         return this.boundingBox;
     }

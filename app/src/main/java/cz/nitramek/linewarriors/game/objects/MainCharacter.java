@@ -9,9 +9,12 @@ public class MainCharacter extends Model {
 
     float speed;
 
+    boolean moveable;
+
     public MainCharacter(Sprite sprite) {
         super(sprite);
         this.speed = 0.05f;
+        this.moveable = true;
     }
 
     @Override
@@ -21,17 +24,21 @@ public class MainCharacter extends Model {
 
     @Override
     public void move(Vector direction) {
+        if(this.moveable) {
+            final RectF b = this.sprite.getModelMatrix().getBoundingBox();
 
-        final RectF b = this.sprite.getModelMatrix().getBoundingBox();
-        final boolean isOut = b.top < 0.8f &&
-                b.left > -0.8f &&
-                b.bottom > -0.8f &&
-                b.right < 0.8f;
-        if (isOut) {
-            super.move(direction);
-            //TODO vyřešit zaseknutí na kraji
+            final boolean isOut = b.top < 0.9f &&
+                    b.left > -0.9f &&
+                    b.bottom > -0.9f &&
+                    b.right < 0.9f;
+            if (isOut) {
+                super.move(direction);
+                //TODO vyřešit zaseknutí na kraji
+            }
         }
+    }
 
-
+    public void setMoveable(boolean moveable) {
+        this.moveable = moveable;
     }
 }

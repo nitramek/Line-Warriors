@@ -39,8 +39,8 @@ public class GameWorld implements Runnable {
         this.mainCharacter = new MainCharacter(mainCharacterSprite);
         this.listener.addDrawable(mainCharacterSprite);
         this.addEnemy();
-        this.addEnemy();
-        this.addEnemy();
+//        this.addEnemy();
+//        this.addEnemy();
         this.worldThread = new Thread(this);
         this.worldThread.setDaemon(true);
         this.worldThread.start();
@@ -77,17 +77,24 @@ public class GameWorld implements Runnable {
     @Override
     public void run() {
         running = true;
+
         while (running) {
             for (int i = 0; i < enemies.length; i++) {
                 Enemy e = enemies[i];
+                boolean collision = false;
                 if (e != null) {
                     if (!e.collide(mainCharacter)) {
                         e.move(new Vector(0f, -1f));
+
+                    } else {
+                        collision = true;
                     }
                     if (e.behindLine(LINE_Y)) {
                         e.requestRemoval();
                         enemies[i] = null;
                     }
+                    //TODO povoilit zpětné pohyby
+                    mainCharacter.setMoveable(!collision);
                 }
             }
             try {

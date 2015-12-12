@@ -42,7 +42,12 @@ public abstract class Model {
 
     public boolean collide(Model other) {
         final RectF boundingBox = this.sprite.getModelMatrix().getBoundingBox();
-        return other.sprite.getModelMatrix().getBoundingBox().contains(boundingBox);
+        final RectF otherBox = other.sprite.getModelMatrix().getBoundingBox();
+
+        return !(otherBox.left > boundingBox.right
+                || otherBox.right < boundingBox.left
+                || otherBox.top < boundingBox.bottom
+                || otherBox.bottom > boundingBox.top);
     }
 
     public abstract float getSpeed();
