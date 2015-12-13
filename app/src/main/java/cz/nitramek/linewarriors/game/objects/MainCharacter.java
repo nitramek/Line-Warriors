@@ -3,6 +3,7 @@ package cz.nitramek.linewarriors.game.objects;
 
 import android.graphics.RectF;
 
+import cz.nitramek.linewarriors.game.StateChangedListener;
 import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
 import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
@@ -10,6 +11,7 @@ import cz.nitramek.linewarriors.game.utils.Vector;
 public abstract class MainCharacter extends Model {
 
     private final OnAbilityCast listener;
+    private final StateChangedListener stateChangedListener;
     float speed;
 
     boolean movable;
@@ -17,16 +19,16 @@ public abstract class MainCharacter extends Model {
     private int health;
 
     public MainCharacter(Sprite sprite) {
-        this(sprite, null);
+        this(sprite, null, null);
     }
 
-    public MainCharacter(Sprite sprite, OnAbilityCast listener) {
+    public MainCharacter(Sprite sprite, OnAbilityCast listener, StateChangedListener stateChangedListener) {
         super(sprite);
         this.listener = listener;
+        this.stateChangedListener = stateChangedListener;
         this.speed = 0.005f;
         this.movable = true;
     }
-
 
     @Override
     public float getSpeed() {
@@ -56,13 +58,27 @@ public abstract class MainCharacter extends Model {
     protected void cast(SpellManager.SpellType type) {
         this.listener.onCast(type);
     }
+
     public abstract void castFirstAbility();
-
-
-
 
     public void obtainDamage(int damage) {
         this.health -= damage;
+        if(this.isDead()){
+            this.stateChangedListener.onDeath(false);
+        }
+    }
+
+    @Override
+    public boolean collide(Model other) {
+        return super.collide(other);
+    }
+
+    public boolean isDead() {
+        return this.health < 0;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 
 }

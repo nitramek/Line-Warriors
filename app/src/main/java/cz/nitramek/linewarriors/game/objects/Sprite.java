@@ -28,7 +28,6 @@ public class Sprite implements Drawable {
 
     private boolean remove;
 
-
     public Sprite(Square square, int maxSpriteX, int maxSpriteY, int textureId) {
         this(square, maxSpriteX, maxSpriteY, textureId, new ModelMatrix());
     }

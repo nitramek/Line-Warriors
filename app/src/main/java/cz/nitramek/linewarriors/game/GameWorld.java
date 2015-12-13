@@ -19,7 +19,7 @@ import cz.nitramek.linewarriors.game.utils.Vector;
 /**
  * Must be instantiated
  */
-public class GameWorld implements Runnable, OnAbilityCast {
+public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener {
     public static final float LINE_Y = -0.75f;
     private final GameRendererListener listener;
     private final List<Spell> spells;
@@ -36,6 +36,10 @@ public class GameWorld implements Runnable, OnAbilityCast {
     private Thread worldThread;
     private boolean running;
 
+    private int kills;
+    private int deaths;
+    private int deathTimer = 5;
+
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
@@ -43,7 +47,7 @@ public class GameWorld implements Runnable, OnAbilityCast {
         this.square4 = new Square(4, 4);
         final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
         mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
-        this.mainCharacter = new Mage(mainCharacterSprite, this);
+        this.mainCharacter = new Mage(mainCharacterSprite, this, this);
         synchronized (this) {
             this.notifyAll();
         }
@@ -113,9 +117,8 @@ public class GameWorld implements Runnable, OnAbilityCast {
 
                         }
                     }
-
                     //pokud kolidují dávají damage
-                    if (!e.collide(mainCharacter)) {
+                    if (mainCharacter.isDead() || !e.collide(mainCharacter)) {
                         e.move(new Vector(0f, -1f));
 
                     } else {
@@ -156,6 +159,7 @@ public class GameWorld implements Runnable, OnAbilityCast {
     public void onCast(SpellManager.SpellType type) {
         switch (type) {
             case FIRE:
+                //TODO rework, this is completely unacceptable
                 final Sprite spellSprite = new Sprite(
                         new Square(1, 4),
                         1,
@@ -186,6 +190,27 @@ public class GameWorld implements Runnable, OnAbilityCast {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onDeath(boolean enemy) {
+        this.mainCharacter.requestRemoval();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < GameWorld.this.deathTimer; i++) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
+                mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * GameWorld.this.listener.getRatio());
+                GameWorld.this.mainCharacter.setSprite(mainCharacterSprite);
+                GameWorld.this.listener.addDrawable(mainCharacterSprite);
+            }
+        }).start();
     }
 }
 
