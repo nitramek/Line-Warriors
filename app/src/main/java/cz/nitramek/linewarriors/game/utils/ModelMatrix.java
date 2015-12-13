@@ -83,7 +83,7 @@ public class ModelMatrix {
     }
 
 
-    public float[] getValues() {
+    public synchronized float[] getValues() {
         return values;
     }
 
