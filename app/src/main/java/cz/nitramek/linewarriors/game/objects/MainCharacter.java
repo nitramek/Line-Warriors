@@ -4,6 +4,7 @@ package cz.nitramek.linewarriors.game.objects;
 import android.graphics.RectF;
 
 import cz.nitramek.linewarriors.game.StateChangedListener;
+import cz.nitramek.linewarriors.game.utils.Constants;
 import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
 import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
@@ -28,6 +29,7 @@ public abstract class MainCharacter extends Model {
         this.stateChangedListener = stateChangedListener;
         this.speed = 0.005f;
         this.movable = true;
+        this.health = Constants.STARTING_HEALTH;
     }
 
     @Override
@@ -63,7 +65,7 @@ public abstract class MainCharacter extends Model {
 
     public void obtainDamage(int damage) {
         this.health -= damage;
-        if(this.isDead()){
+        if (this.isDead()) {
             this.stateChangedListener.onDeath(false);
         }
     }
@@ -81,4 +83,7 @@ public abstract class MainCharacter extends Model {
         this.sprite = sprite;
     }
 
+    public int getHealth() {
+        return this.health;
+    }
 }

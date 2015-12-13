@@ -23,17 +23,21 @@ import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.Controller;
 import cz.nitramek.linewarriors.game.GameView;
 import cz.nitramek.linewarriors.game.GameWorld;
-import cz.nitramek.linewarriors.game.utils.GoldChangedListener;
+import cz.nitramek.linewarriors.game.utils.Constants;
+import cz.nitramek.linewarriors.game.utils.GameStateListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 
-public class GameActivity extends Activity implements GoldChangedListener {
+public class GameActivity extends Activity implements GameStateListener {
 
+    public static final int GOLD_MSG = 0;
+    public static final int HEALTH_MSG = 1;
     private GameView gameView;
     private Controller controller;
     private RelativeLayout rl;
     private TextView goldView;
     private LinearLayout bestiary;
     private Handler handler;
+    private TextView healthView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,14 @@ public class GameActivity extends Activity implements GoldChangedListener {
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                GameActivity.this.goldView.setText(String.format("G: %s", String.valueOf(msg.arg1)));
+                switch (msg.what) {
+                    case GOLD_MSG:
+                        GameActivity.this.goldView.setText(String.format("G: %s", String.valueOf(msg.arg1)));
+                        break;
+                    case HEALTH_MSG:
+                        GameActivity.this.healthView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
+                        break;
+                }
             }
         };
 
@@ -55,7 +66,7 @@ public class GameActivity extends Activity implements GoldChangedListener {
                             GameActivity.this.gameView.getWidth(),
                             GameActivity.this.gameView.getHeight());
                     GameActivity.this.gameView.setOnTouchListener(GameActivity.this.controller);
-                    GameActivity.this.gameView.getWorld().setGoldChangedListener(GameActivity.this);
+                    GameActivity.this.gameView.getWorld().setGameStateListener(GameActivity.this);
                 }
             });
         } catch (IOException e) {
@@ -72,16 +83,29 @@ public class GameActivity extends Activity implements GoldChangedListener {
     private void initTopUi() {
         this.rl = new RelativeLayout(this);
         this.rl.addView(this.gameView);
-        this.goldView = new TextView(this);
+
+
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_TOP);
         lp.addRule(RelativeLayout.ALIGN_LEFT);
-
+        this.goldView = new TextView(this);
         goldView.setLayoutParams(lp);
-        this.goldChanged(50);
+        this.goldChanged(Constants.STARTING_GOLD);
         goldView.setBackgroundColor(Color.DKGRAY);
         goldView.setTextColor(Color.YELLOW);
+        goldView.setId(View.generateViewId());
         rl.addView(goldView);
+
+
+        lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.BELOW, goldView.getId());
+        ;
+        this.healthView = new TextView(this);
+        this.healthView.setLayoutParams(lp);
+        this.healthChanged(Constants.STARTING_HEALTH);
+        healthView.setBackgroundColor(Color.DKGRAY);
+        healthView.setTextColor(Color.RED);
+        rl.addView(this.healthView);
 
         lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_TOP);
@@ -144,8 +168,13 @@ public class GameActivity extends Activity implements GoldChangedListener {
 
     @Override
     public void goldChanged(int gold) {
-        Message m = Message.obtain(handler);
-        m.arg1 = gold;
+        Message m = Message.obtain(handler, GOLD_MSG, gold, 0);
+        m.sendToTarget();
+    }
+
+    @Override
+    public void healthChanged(int health) {
+        Message m = Message.obtain(handler, HEALTH_MSG, health, 0);
         m.sendToTarget();
     }
 }

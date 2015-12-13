@@ -1,6 +1,7 @@
 package cz.nitramek.linewarriors.game.utils;
 
 
-public interface GoldChangedListener {
+public interface GameStateListener {
     void goldChanged(int gold);
+    void healthChanged(int health);
 }

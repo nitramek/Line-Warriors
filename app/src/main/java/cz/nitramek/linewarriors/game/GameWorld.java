@@ -9,8 +9,9 @@ import cz.nitramek.linewarriors.game.objects.MainCharacter;
 import cz.nitramek.linewarriors.game.objects.Spell;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
+import cz.nitramek.linewarriors.game.utils.Constants;
 import cz.nitramek.linewarriors.game.utils.GameRendererListener;
-import cz.nitramek.linewarriors.game.utils.GoldChangedListener;
+import cz.nitramek.linewarriors.game.utils.GameStateListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
 import cz.nitramek.linewarriors.game.utils.SpellManager;
@@ -38,14 +39,10 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     private Thread worldThread;
     private boolean running;
+    private int gold = Constants.STARTING_GOLD;
+    private int deathTimer = Constants.RESPAWN_TIME;
 
-    private int kills;
-    private int deaths;
-
-    private int gold = 50;
-    private int deathTimer = 5;
-
-    private GoldChangedListener goldChangedListener;
+    private GameStateListener gameStateListener;
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
@@ -84,8 +81,14 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     }
 
     private void fireGoldChanged() {
-        if(this.goldChangedListener != null){
-            this.goldChangedListener.goldChanged(this.gold);
+        if (this.gameStateListener != null) {
+            this.gameStateListener.goldChanged(this.gold);
+        }
+    }
+
+    private void fireHealthChanged() {
+        if (this.gameStateListener != null) {
+            this.gameStateListener.healthChanged(this.mainCharacter.getHealth());
         }
     }
 
@@ -137,6 +140,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
                     } else {
                         collision = true;
+                        this.fireHealthChanged();
+
                     }
                     if (e.behindLine(LINE_Y)) {
                         e.requestRemoval();
@@ -150,6 +155,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     }
                     //TODO povoilit zpětné pohyby
                     mainCharacter.setMovable(!collision);
+
                 }
             }
             try {
@@ -229,13 +235,14 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                 mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * GameWorld.this.listener.getRatio());
                 GameWorld.this.mainCharacter.setSprite(mainCharacterSprite);
                 GameWorld.this.listener.addDrawable(mainCharacterSprite);
+                GameWorld.this.fireHealthChanged();
             }
         }).start();
     }
 
 
-    public void setGoldChangedListener(GoldChangedListener goldChangedListener) {
-        this.goldChangedListener = goldChangedListener;
+    public void setGameStateListener(GameStateListener gameStateListener) {
+        this.gameStateListener = gameStateListener;
     }
 }
 
