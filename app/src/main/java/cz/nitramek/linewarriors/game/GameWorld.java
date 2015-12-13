@@ -1,7 +1,12 @@
 package cz.nitramek.linewarriors.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.nitramek.linewarriors.game.objects.Enemy;
+import cz.nitramek.linewarriors.game.objects.Mage;
 import cz.nitramek.linewarriors.game.objects.MainCharacter;
+import cz.nitramek.linewarriors.game.objects.Spell;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
 import cz.nitramek.linewarriors.game.utils.GameRendererListener;
@@ -21,6 +26,8 @@ public class GameWorld implements Runnable {
     private Enemy[] enemies;
     private MainCharacter mainCharacter;
 
+    private List<Spell> spells;
+
     /**
      * Reprezents square with 1/4 UV mapping
      */
@@ -36,7 +43,10 @@ public class GameWorld implements Runnable {
         this.square4 = new Square(4);
         final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
         mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
-        this.mainCharacter = new MainCharacter(mainCharacterSprite);
+        this.mainCharacter = new Mage(mainCharacterSprite);
+        synchronized (this) {
+            this.notifyAll();
+        }
         this.listener.addDrawable(mainCharacterSprite);
         this.addEnemy();
 //        this.addEnemy();
@@ -44,6 +54,7 @@ public class GameWorld implements Runnable {
         this.worldThread = new Thread(this);
         this.worldThread.setDaemon(true);
         this.worldThread.start();
+        this.spells = new ArrayList<>();
 
     }
 
@@ -51,8 +62,9 @@ public class GameWorld implements Runnable {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
             final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.JENOVA));
-            enemySprite.getModelMatrix().translate(-0.75f / 0.15f + freeIndex * 0.75f / 0.22f, 1.3f / 0.15f * this.listener.getRatio());
+//            enemySprite.getModelMatrix().translate(-0.75f / 0.15f + freeIndex * 0.75f / 0.22f, 1.3f / 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
+            enemySprite.getModelMatrix().setPosition(-0.75f, 0.75f);
             Enemy e = new Enemy(5, 10, enemySprite);
             enemies[freeIndex] = e;
             this.listener.addDrawable(enemySprite);
@@ -71,6 +83,15 @@ public class GameWorld implements Runnable {
 
 
     public MainCharacter getMainCharacter() {
+        synchronized (this) {
+            if (this.mainCharacter == null) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return mainCharacter;
     }
 
@@ -82,7 +103,12 @@ public class GameWorld implements Runnable {
             for (int i = 0; i < enemies.length; i++) {
                 Enemy e = enemies[i];
                 boolean collision = false;
+                for (Spell s : spells) {
+                    //při kolizi způsobí damage
+                    s.collide(e);
+                }
                 if (e != null) {
+                    //pokud kolidují dávají damage
                     if (!e.collide(mainCharacter)) {
                         e.move(new Vector(0f, -1f));
 
@@ -94,7 +120,7 @@ public class GameWorld implements Runnable {
                         enemies[i] = null;
                     }
                     //TODO povoilit zpětné pohyby
-                    mainCharacter.setMoveable(!collision);
+                    mainCharacter.setMovable(!collision);
                 }
             }
             try {

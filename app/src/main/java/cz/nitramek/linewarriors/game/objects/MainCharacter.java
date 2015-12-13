@@ -5,16 +5,19 @@ import android.graphics.RectF;
 
 import cz.nitramek.linewarriors.game.utils.Vector;
 
-public class MainCharacter extends Model {
+public abstract class MainCharacter extends Model {
 
     float speed;
 
-    boolean moveable;
+    boolean movable;
+
+    private int casting = 0;
+    private int health;
 
     public MainCharacter(Sprite sprite) {
         super(sprite);
-        this.speed = 0.05f;
-        this.moveable = true;
+        this.speed = 0.005f;
+        this.movable = true;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class MainCharacter extends Model {
 
     @Override
     public void move(Vector direction) {
-        if(this.moveable) {
+        if (this.movable) {
             final RectF b = this.sprite.getModelMatrix().getBoundingBox();
 
             final boolean isOut = b.top < 0.9f &&
@@ -38,7 +41,20 @@ public class MainCharacter extends Model {
         }
     }
 
-    public void setMoveable(boolean moveable) {
-        this.moveable = moveable;
+    public void setMovable(boolean movable) {
+        this.movable = movable;
     }
+
+    public void castFirstAbility() {
+        casting = 0;
+    }
+
+    public int getCasting() {
+        return casting;
+    }
+
+    public void obtainDamage(int damage) {
+        this.health -= damage;
+    }
+
 }

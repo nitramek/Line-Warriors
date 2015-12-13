@@ -28,10 +28,14 @@ public class GameView extends GLSurfaceView {
     private Sprite mainCharacter;
     private GameWorld world;
 
+    private InitiationCallback initiationCallback;
 
-    public GameView(Context context) throws IOException {
+
+
+    public GameView(Context context, InitiationCallback initiationCallback) throws IOException {
         super(context);
         this.setEGLContextClientVersion(2);
+        this.initiationCallback = initiationCallback;
 
         try {
             String vertexShader = AssetLoader.loadText(context.getAssets(), "shaders/normal.vert");
@@ -71,14 +75,22 @@ public class GameView extends GLSurfaceView {
 
         Drawable background = new Sprite(new Square(1), 1, 1, textureManager.getTextureId(TextureKey.BACKGROUND));
         this.renderer.add(background);
-
-
         world = new GameWorld(this.renderer);
-        controller = new Controller(this.world.getMainCharacter());
-        this.setOnTouchListener(controller);
+        this.initiationCallback.onInitiation(this);
+    }
+
+    public boolean isInitialized() {
+        return this.world != null && this.renderer != null;
     }
 
     public GameWorld getWorld() {
         return world;
+    }
+
+    public GameRenderer getRenderer() {
+        return renderer;
+    }
+    public interface InitiationCallback{
+        void onInitiation(GameView view);
     }
 }

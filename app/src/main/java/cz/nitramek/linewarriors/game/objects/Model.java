@@ -56,5 +56,9 @@ public abstract class Model {
         this.sprite.setRemove(true);
     }
 
+    public void setPosition(float x, float y){
+        this.sprite.getModelMatrix().setPosition(x, y);
+    }
+
 
 }

@@ -28,8 +28,8 @@ public class ModelMatrix {
     }
 
     public synchronized void recount() {
-        Matrix.multiplyMM(this.values, 0, this.rotateMatrix, 0, this.scaleMatrix, 0);
-        Matrix.multiplyMM(this.values, 0, this.values, 0, this.translateMatrix, 0);
+        Matrix.multiplyMM(this.values, 0, this.rotateMatrix, 0,  this.translateMatrix, 0);
+        Matrix.multiplyMM(this.values, 0, this.values, 0, this.scaleMatrix, 0);
     }
 
     public void translate(float x, float y) {
@@ -38,6 +38,10 @@ public class ModelMatrix {
         this.recount();
 
 
+    }
+    public void setPosition(float x, float y){
+        Matrix.setIdentityM(this.translateMatrix, 0);
+        this.translate(x, y);
     }
 
     /**

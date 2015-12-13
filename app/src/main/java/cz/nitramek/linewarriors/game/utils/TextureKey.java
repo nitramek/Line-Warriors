@@ -4,7 +4,8 @@ package cz.nitramek.linewarriors.game.utils;
 public enum TextureKey {
     BACKGROUND("drawable/background"),
     MAGE("drawable/redmage_m"),
-    JENOVA("drawable/jenova2");
+    JENOVA("drawable/jenova2"),
+    EXPLOSION("drawable/explosion");
 
     public final String resourcePath;
     TextureKey(String s) {

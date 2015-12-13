@@ -14,11 +14,35 @@ public class Enemy extends Model {
 
     @Override
     public float getSpeed() {
-        return 0.05f;
+        return 0.005f;
     }
 
     public boolean behindLine(float y) {
         return this.sprite.getModelMatrix().getBoundingBox().bottom < y;
+    }
+
+    public void attack(MainCharacter character) {
+        character.obtainDamage(this.damage);
+    }
+
+    public void obtainDamage(int damage) {
+        this.health -= damage;
+        if (this.isDead()) {
+            this.requestRemoval();
+        }
+    }
+
+    @Override
+    public boolean collide(Model other) {
+        final boolean collide = super.collide(other);
+        if(collide && other instanceof MainCharacter){
+            ((MainCharacter) other).obtainDamage(this.damage);
+        }
+        return collide;
+    }
+
+    public boolean isDead() {
+        return this.health <= 0;
     }
 
 
