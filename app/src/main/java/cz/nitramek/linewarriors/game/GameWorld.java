@@ -21,6 +21,7 @@ import cz.nitramek.linewarriors.game.utils.Vector;
  */
 public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener {
     public static final float LINE_Y = -0.75f;
+    public static final int CAPACITY = 5;
     private final GameRendererListener listener;
     private final List<Spell> spells;
     /**
@@ -43,7 +44,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
-        this.enemies = new Enemy[3];
+        this.enemies = new Enemy[CAPACITY];
         this.square4 = new Square(4, 4);
         final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
         mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
@@ -66,9 +67,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
             final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.JENOVA));
-//            enemySprite.getModelMatrix().translate(-0.75f / 0.15f + freeIndex * 0.75f / 0.22f, 1.3f / 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
-            enemySprite.getModelMatrix().setPosition(-0.75f, 0.75f);
+            enemySprite.getModelMatrix().setPosition(-0.75f + freeIndex * 1.5f / CAPACITY, 0.75f);
             Enemy e = new Enemy(5, 10, enemySprite);
             enemies[freeIndex] = e;
             this.listener.addDrawable(enemySprite);

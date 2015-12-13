@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Line Warriors</string>
+    <string name="Shop">Obchod</string>
+    <string name="bestiary">Bestiář</string>
 </resources>
