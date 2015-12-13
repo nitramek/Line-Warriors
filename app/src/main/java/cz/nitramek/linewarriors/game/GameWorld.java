@@ -10,6 +10,7 @@ import cz.nitramek.linewarriors.game.objects.Spell;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
 import cz.nitramek.linewarriors.game.utils.GameRendererListener;
+import cz.nitramek.linewarriors.game.utils.GoldChangedListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
 import cz.nitramek.linewarriors.game.utils.SpellManager;
@@ -40,8 +41,11 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     private int kills;
     private int deaths;
+
+    private int gold = 50;
     private int deathTimer = 5;
 
+    private GoldChangedListener goldChangedListener;
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
@@ -67,15 +71,24 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     public void addEnemy(Monster monster) {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
+            this.gold -= monster.reward;
+            this.fireGoldChanged();
             final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.valueOf(monster.toString())));
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().setPosition(-0.75f + freeIndex * 1.5f / CAPACITY, 0.75f);
-            Enemy e = new Enemy(monster, enemySprite);
+            Enemy e = new Enemy(enemySprite, monster, this);
             enemies[freeIndex] = e;
             this.listener.addDrawable(enemySprite);
         }
 
     }
+
+    private void fireGoldChanged() {
+        if(this.goldChangedListener != null){
+            this.goldChangedListener.goldChanged(this.gold);
+        }
+    }
+
 
     private int findFreeSpot() {
         for (int i = 0; i < enemies.length; i++) {
@@ -127,6 +140,12 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     }
                     if (e.behindLine(LINE_Y)) {
                         e.requestRemoval();
+                        enemies[i] = null;
+                    }
+                    if (e.isDead()) {
+                        e.requestRemoval();
+                        this.gold += e.getMonster().reward;
+                        this.fireGoldChanged();
                         enemies[i] = null;
                     }
                     //TODO povoilit zpětné pohyby
@@ -212,6 +231,11 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                 GameWorld.this.listener.addDrawable(mainCharacterSprite);
             }
         }).start();
+    }
+
+
+    public void setGoldChangedListener(GoldChangedListener goldChangedListener) {
+        this.goldChangedListener = goldChangedListener;
     }
 }
 

@@ -3,4 +3,5 @@
     <string name="Shop">Obchod</string>
     <string name="bestiary">Bestiář</string>
     <string name="game_activity">Line Warriros</string>
+    <string name="gold">"G: "</string>
 </resources>

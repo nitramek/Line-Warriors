@@ -4,6 +4,9 @@ package cz.nitramek.linewarriors.activities;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,21 +23,28 @@ import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.Controller;
 import cz.nitramek.linewarriors.game.GameView;
 import cz.nitramek.linewarriors.game.GameWorld;
+import cz.nitramek.linewarriors.game.utils.GoldChangedListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity implements GoldChangedListener {
 
     private GameView gameView;
     private Controller controller;
     private RelativeLayout rl;
-    private TextView scoreView;
-    private LinearLayout enemiesView;
-    private TextView bestiary;
+    private TextView goldView;
+    private LinearLayout bestiary;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                GameActivity.this.goldView.setText(String.format("G: %s", String.valueOf(msg.arg1)));
+            }
+        };
 
         try {
             gameView = new GameView(this, new GameView.InitiationCallback() {
@@ -45,6 +55,7 @@ public class GameActivity extends Activity {
                             GameActivity.this.gameView.getWidth(),
                             GameActivity.this.gameView.getHeight());
                     GameActivity.this.gameView.setOnTouchListener(GameActivity.this.controller);
+                    GameActivity.this.gameView.getWorld().setGoldChangedListener(GameActivity.this);
                 }
             });
         } catch (IOException e) {
@@ -52,40 +63,52 @@ public class GameActivity extends Activity {
             this.finish();
         }
         GameActivity.this.controller = new Controller(GameActivity.this);
+        initTopUi();
+        setContentView(this.rl);
+
+
+    }
+
+    private void initTopUi() {
         this.rl = new RelativeLayout(this);
         this.rl.addView(this.gameView);
-        this.scoreView = new TextView(this);
+        this.goldView = new TextView(this);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_TOP);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        bestiary = new TextView(this);
-        bestiary.setLayoutParams(lp);
-        bestiary.setText(R.string.bestiary);
-        bestiary.setBackgroundColor(Color.WHITE);
-        bestiary.setTextColor(Color.BLACK);
-//        scoreView.setLayoutParams(lp);
-//        scoreView.setText(R.string.Shop);
-//        scoreView.setBackgroundColor(Color.WHITE);
-//        scoreView.setTextColor(Color.BLACK);
-//        rl.addView(scoreView);
+        lp.addRule(RelativeLayout.ALIGN_LEFT);
 
-        bestiary.setOnTouchListener(new View.OnTouchListener() {
+        goldView.setLayoutParams(lp);
+        this.goldChanged(50);
+        goldView.setBackgroundColor(Color.DKGRAY);
+        goldView.setTextColor(Color.YELLOW);
+        rl.addView(goldView);
+
+        lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_TOP);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        TextView bestiaryLink = new TextView(this);
+        bestiaryLink.setLayoutParams(lp);
+        bestiaryLink.setText(R.string.bestiary);
+        bestiaryLink.setBackgroundColor(Color.WHITE);
+        bestiaryLink.setTextColor(Color.BLACK);
+
+        bestiaryLink.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                GameActivity.this.enemiesView.setVisibility(View.VISIBLE);
+                GameActivity.this.bestiary.setVisibility(View.VISIBLE);
                 v.setVisibility(View.GONE);
                 return true;
             }
         });
         LayoutInflater inflater = this.getLayoutInflater();
-        this.enemiesView = (LinearLayout) inflater.inflate(R.layout.enemy_selection, null);
-        this.enemiesView.setLayoutParams(lp);
-        this.enemiesView.setVisibility(View.GONE);
+        this.bestiary = (LinearLayout) inflater.inflate(R.layout.enemy_selection, null);
+        this.bestiary.setLayoutParams(lp);
+        this.bestiary.setVisibility(View.GONE);
+        this.rl.addView(bestiaryLink);
         this.rl.addView(this.bestiary);
-        this.rl.addView(this.enemiesView);
-        setContentView(this.rl);
-        for (int i = 0; i < enemiesView.getChildCount(); i++) {
-            ImageView iv = (ImageView) enemiesView.getChildAt(i);
+
+        for (int i = 0; i < this.bestiary.getChildCount(); i++) {
+            ImageView iv = (ImageView) this.bestiary.getChildAt(i);
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -93,7 +116,6 @@ public class GameActivity extends Activity {
                 }
             });
         }
-
     }
 
     @Override
@@ -118,5 +140,12 @@ public class GameActivity extends Activity {
                 world.onPause();
             }
         }
+    }
+
+    @Override
+    public void goldChanged(int gold) {
+        Message m = Message.obtain(handler);
+        m.arg1 = gold;
+        m.sendToTarget();
     }
 }

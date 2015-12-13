@@ -1,22 +1,26 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
+import cz.nitramek.linewarriors.game.StateChangedListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 
 public class Enemy extends Model {
+    private final StateChangedListener stateChangedListener;
     private int damage;
     private int health;
-
-
+    private Monster monster;
     private float speed;
 
 
-    public Enemy(Monster monster, Sprite sprite) {
+    public Enemy(Sprite sprite, Monster monster, StateChangedListener stateChangedListener) {
         super(sprite);
+        this.monster = monster;
+        this.stateChangedListener = stateChangedListener;
         this.damage = monster.damage;
         this.health = monster.health;
         this.speed = monster.speed;
     }
+
 
     @Override
     public float getSpeed() {
@@ -35,6 +39,7 @@ public class Enemy extends Model {
         this.health -= damage;
         if (this.isDead()) {
             this.requestRemoval();
+            this.stateChangedListener.onDeath(true);
         }
     }
 
@@ -51,5 +56,7 @@ public class Enemy extends Model {
         return this.health <= 0;
     }
 
-
+    public Monster getMonster() {
+        return monster;
+    }
 }
