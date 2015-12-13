@@ -240,9 +240,11 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                         e.printStackTrace();
                     }
                 }
+                //respawn
                 final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
                 mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * GameWorld.this.listener.getRatio());
                 GameWorld.this.mainCharacter.setSprite(mainCharacterSprite);
+                GameWorld.this.mainCharacter.resetHealth();
                 GameWorld.this.listener.addDrawable(mainCharacterSprite);
                 GameWorld.this.fireHealthChanged();
             }

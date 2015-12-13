@@ -56,7 +56,7 @@ public class GameView extends GLSurfaceView {
             Log.e(GameView.class.getName(), "Error in creating/loading shaders", e);
             throw e;
         }
-        this.setRenderMode(RENDERMODE_WHEN_DIRTY);
+        this.setRenderMode(RENDERMODE_CONTINUOUSLY);
     }
 
 

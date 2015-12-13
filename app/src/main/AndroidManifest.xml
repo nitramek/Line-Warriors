@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cz.nitramek.linewarriors">
 
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/jenova_head"
@@ -11,12 +13,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.GameActivity"
-            android:screenOrientation="portrait"
             android:label="@string/game_activity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -2,6 +2,7 @@
     <string name="app_name">Line Warriors</string>
     <string name="Shop">Obchod</string>
     <string name="bestiary">Bestiář</string>
-    <string name="game_activity">Line Warriros</string>
+    <string name="game_activity">Game activity</string>
     <string name="gold">"G: "</string>
+    <string name="title_activity_main">Line Warriors</string>
 </resources>

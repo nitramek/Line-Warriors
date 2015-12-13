@@ -82,6 +82,9 @@ public abstract class MainCharacter extends Model {
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;
     }
+    public void resetHealth(){
+        this.health = Constants.STARTING_HEALTH;
+    }
 
     public int getHealth() {
         return this.health;
