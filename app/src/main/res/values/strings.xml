@@ -5,4 +5,7 @@
     <string name="game_activity">Game activity</string>
     <string name="gold">"G: "</string>
     <string name="title_activity_main">Line Warriors</string>
+    <string name="start_as_server">Zapnout jako server</string>
+    <string name="start_as_clinet">Zapnout jako klient</string>
+    <string name="main_btn_start_training">Trénink</string>
 </resources>

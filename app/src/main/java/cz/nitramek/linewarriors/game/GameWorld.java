@@ -18,6 +18,8 @@ import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
 import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
+import cz.nitramek.linewarriors.networking.Networker;
+import cz.nitramek.linewarriors.util.Role;
 
 /**
  * Must be instantiated
@@ -44,6 +46,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private int remainingEscapes = Constants.STARTING_ESCAPES;
 
     private GameStateListener gameStateListener;
+    private Role role;
+    private Networker networker;
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
@@ -56,7 +60,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
             this.notifyAll();
         }
         this.listener.addDrawable(mainCharacterSprite);
-        this.addEnemy(Monster.JENOVA);
+//        this.addEnemy(Monster.JENOVA);
 //        this.addEnemy();
 //        this.addEnemy();
         this.worldThread = new Thread(this);
@@ -69,8 +73,6 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     public void addEnemy(Monster monster) {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
-            this.gold -= monster.reward;
-            this.fireGoldChanged();
             final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.valueOf(monster.toString())));
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().setPosition(-0.75f + freeIndex * 1.5f / CAPACITY, 0.75f);
@@ -78,8 +80,17 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
             enemies[freeIndex] = e;
             this.listener.addDrawable(enemySprite);
         }
-
     }
+
+    public boolean payForMonster(Monster monster) {
+        if (this.gold > monster.reward) {
+            this.gold -= monster.reward;
+            this.fireGoldChanged();
+            return true;
+        }
+        return false;
+    }
+
 
     private void fireGoldChanged() {
         if (this.gameStateListener != null) {
@@ -229,7 +240,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     @Override
     public void onDeath(boolean enemy) {
-        if(!enemy) {
+        if (!enemy) {
             this.mainCharacter.requestRemoval();
             new Thread(new Runnable() {
                 @Override
@@ -256,6 +267,22 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     public void setGameStateListener(GameStateListener gameStateListener) {
         this.gameStateListener = gameStateListener;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Networker getNetworker() {
+        return networker;
+    }
+
+    public void setNetworker(Networker networker) {
+        this.networker = networker;
     }
 }
 

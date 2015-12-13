@@ -2,6 +2,8 @@ package cz.nitramek.linewarriors.activities;
 
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -26,8 +29,11 @@ import cz.nitramek.linewarriors.game.GameWorld;
 import cz.nitramek.linewarriors.game.utils.Constants;
 import cz.nitramek.linewarriors.game.utils.GameStateListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
+import cz.nitramek.linewarriors.networking.Networker;
+import cz.nitramek.linewarriors.networking.NsdHelper;
+import cz.nitramek.linewarriors.util.Role;
 
-public class GameActivity extends Activity implements GameStateListener {
+public class GameActivity extends Activity implements GameStateListener, NsdHelper.DiscoveryListener, Networker.OnMonsterListener {
 
     public static final int GOLD_MSG = 0;
     public static final int HEALTH_MSG = 1;
@@ -41,10 +47,27 @@ public class GameActivity extends Activity implements GameStateListener {
     private TextView healthView;
     private TextView escapesView;
 
+    private Networker networker;
+    private NsdHelper nsdHelper;
+    private Role role;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        networker = new Networker();
+        nsdHelper = new NsdHelper(this, networker);
 
+        final Intent intent = super.getIntent();
+        role = (Role) intent.getSerializableExtra(MainActivity.EXTRA_CONNECT_AS);
+        switch (role) {
+            case SERVER:
+                this.nsdHelper.registerService();
+                break;
+            case CLIENT:
+                this.nsdHelper.startDiscovery();
+                break;
+        }
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -73,6 +96,9 @@ public class GameActivity extends Activity implements GameStateListener {
                             GameActivity.this.gameView.getHeight());
                     GameActivity.this.gameView.setOnTouchListener(GameActivity.this.controller);
                     GameActivity.this.gameView.getWorld().setGameStateListener(GameActivity.this);
+                    GameActivity.this.gameView.getWorld().setRole(role);
+                    GameActivity.this.networker.setOnMonsterListener(GameActivity.this);
+                    GameActivity.this.gameView.getWorld().setNetworker(networker);
                 }
             });
         } catch (IOException e) {
@@ -152,7 +178,16 @@ public class GameActivity extends Activity implements GameStateListener {
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    GameActivity.this.gameView.getWorld().addEnemy(Monster.valueOf((String) v.getTag()));
+                    final Monster monster = Monster.valueOf((String) v.getTag());
+                    if (GameActivity.this.gameView.getWorld().payForMonster(monster)) {
+                        if (role.equals(Role.NONE)) {
+                            GameActivity.this.gameView.getWorld().addEnemy(monster);
+                        } else {
+                            GameActivity.this.networker.sendMessage(monster.toString());
+                        }
+                    } else {
+                        Toast.makeText(GameActivity.this, "Nemáš zlaté na tuhle potvoru", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
@@ -172,7 +207,7 @@ public class GameActivity extends Activity implements GameStateListener {
 
     @Override
     protected void onPause() {
-        super.onPause();
+
         if (gameView != null) {
             gameView.onPause();
             final GameWorld world = gameView.getWorld();
@@ -180,6 +215,8 @@ public class GameActivity extends Activity implements GameStateListener {
                 world.onPause();
             }
         }
+        this.nsdHelper.unregister();
+        super.onPause();
     }
 
     @Override
@@ -195,5 +232,21 @@ public class GameActivity extends Activity implements GameStateListener {
     @Override
     public void escapedChanged(int remainingEscapes) {
         Message.obtain(handler, REMAINING_ESCAPES_MGS, remainingEscapes, 0).sendToTarget();
+        SharedPreferences sp = this.getPreferences(MODE_PRIVATE);
+        final SharedPreferences.Editor edit = sp.edit();
+        edit.putInt("KILLS", Constants.STARTING_ESCAPES - remainingEscapes);
+        edit.apply();
+
+    }
+
+    @Override
+    public void found() {
+        Toast.makeText(this, "Found server, you can now send enemies to your opponent!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onMonsterRecieved(Monster monster) {
+        GameActivity.this.gameView.getWorld().addEnemy(monster);
     }
 }
