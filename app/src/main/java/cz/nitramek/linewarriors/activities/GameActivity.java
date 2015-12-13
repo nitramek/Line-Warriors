@@ -31,6 +31,7 @@ public class GameActivity extends Activity implements GameStateListener {
 
     public static final int GOLD_MSG = 0;
     public static final int HEALTH_MSG = 1;
+    public static final int REMAINING_ESCAPES_MGS = 2;
     private GameView gameView;
     private Controller controller;
     private RelativeLayout rl;
@@ -38,6 +39,7 @@ public class GameActivity extends Activity implements GameStateListener {
     private LinearLayout bestiary;
     private Handler handler;
     private TextView healthView;
+    private TextView escapesView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,10 @@ public class GameActivity extends Activity implements GameStateListener {
                     case HEALTH_MSG:
                         GameActivity.this.healthView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
                         break;
+                    case REMAINING_ESCAPES_MGS:
+                        GameActivity.this.escapesView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
+                        break;
+
                 }
             }
         };
@@ -99,13 +105,23 @@ public class GameActivity extends Activity implements GameStateListener {
 
         lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.BELOW, goldView.getId());
-        ;
         this.healthView = new TextView(this);
         this.healthView.setLayoutParams(lp);
         this.healthChanged(Constants.STARTING_HEALTH);
         healthView.setBackgroundColor(Color.DKGRAY);
         healthView.setTextColor(Color.RED);
+        this.healthView.setId(View.generateViewId());
         rl.addView(this.healthView);
+
+
+        lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.BELOW, this.healthView.getId());
+        this.escapesView = new TextView(this);
+        this.escapesView.setLayoutParams(lp);
+        this.escapedChanged(Constants.STARTING_ESCAPES);
+        escapesView.setBackgroundColor(Color.DKGRAY);
+        escapesView.setTextColor(Color.BLUE);
+        rl.addView(this.escapesView);
 
         lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_TOP);
@@ -168,13 +184,16 @@ public class GameActivity extends Activity implements GameStateListener {
 
     @Override
     public void goldChanged(int gold) {
-        Message m = Message.obtain(handler, GOLD_MSG, gold, 0);
-        m.sendToTarget();
+        Message.obtain(handler, GOLD_MSG, gold, 0).sendToTarget();
     }
 
     @Override
     public void healthChanged(int health) {
-        Message m = Message.obtain(handler, HEALTH_MSG, health, 0);
-        m.sendToTarget();
+        Message.obtain(handler, HEALTH_MSG, health, 0).sendToTarget();
+    }
+
+    @Override
+    public void escapedChanged(int remainingEscapes) {
+        Message.obtain(handler, REMAINING_ESCAPES_MGS, remainingEscapes, 0).sendToTarget();
     }
 }

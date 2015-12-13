@@ -41,6 +41,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private boolean running;
     private int gold = Constants.STARTING_GOLD;
     private int deathTimer = Constants.RESPAWN_TIME;
+    private int remainingEscapes = Constants.STARTING_ESCAPES;
 
     private GameStateListener gameStateListener;
 
@@ -89,6 +90,12 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private void fireHealthChanged() {
         if (this.gameStateListener != null) {
             this.gameStateListener.healthChanged(this.mainCharacter.getHealth());
+        }
+    }
+
+    private void fireEscapedChanged() {
+        if (this.gameStateListener != null) {
+            this.gameStateListener.escapedChanged(this.remainingEscapes);
         }
     }
 
@@ -145,7 +152,9 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     }
                     if (e.behindLine(LINE_Y)) {
                         e.requestRemoval();
-                        enemies[i] = null;
+                        this.enemies[i] = null;
+                        this.remainingEscapes--;
+                        this.fireEscapedChanged();
                     }
                     if (e.isDead()) {
                         e.requestRemoval();
