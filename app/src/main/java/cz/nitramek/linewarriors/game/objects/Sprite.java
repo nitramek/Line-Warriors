@@ -66,6 +66,10 @@ public class Sprite implements Drawable {
         this.spriteY = spriteY;
     }
 
+    public void setSpriteX(int spriteX) {
+        this.spriteX = spriteX;
+    }
+
     public void incrementX() {
         if (this.changeSprite > this.changeSpriteTreshold) {
             this.spriteX = (this.spriteX + 1) % this.maxSpriteX;

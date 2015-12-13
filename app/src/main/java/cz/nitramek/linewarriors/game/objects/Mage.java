@@ -1,14 +1,18 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
-public class Mage extends MainCharacter{
+import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
+import cz.nitramek.linewarriors.game.utils.SpellManager;
 
-    public Mage(Sprite sprite) {
-        super(sprite);
+public class Mage extends MainCharacter {
+
+
+    public Mage(Sprite sprite, OnAbilityCast listener) {
+        super(sprite, listener);
     }
 
     @Override
     public void castFirstAbility() {
-        super.castFirstAbility();
+        super.cast(SpellManager.SpellType.FIRE);
     }
 }

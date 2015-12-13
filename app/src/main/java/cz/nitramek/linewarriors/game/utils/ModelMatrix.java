@@ -28,7 +28,7 @@ public class ModelMatrix {
     }
 
     public synchronized void recount() {
-        Matrix.multiplyMM(this.values, 0, this.rotateMatrix, 0,  this.translateMatrix, 0);
+        Matrix.multiplyMM(this.values, 0, this.rotateMatrix, 0, this.translateMatrix, 0);
         Matrix.multiplyMM(this.values, 0, this.values, 0, this.scaleMatrix, 0);
     }
 

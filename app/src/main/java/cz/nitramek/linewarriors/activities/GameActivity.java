@@ -57,7 +57,10 @@ public class GameActivity extends Activity {
         super.onPause();
         if (gameView != null) {
             gameView.onPause();
-            gameView.getWorld().onPause();
+            final GameWorld world = gameView.getWorld();
+            if ((world != null)) {
+                world.onPause();
+            }
         }
     }
 }

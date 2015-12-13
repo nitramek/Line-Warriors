@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import cz.nitramek.linewarriors.game.utils.GameRendererListener;
 public class GameRenderer implements GLSurfaceView.Renderer, GameRendererListener {
 
     private final GameView gameView;
-    private List<Drawable> drawables;
+    private final List<Drawable> drawables;
     private ShaderInitiator shaderInitiator;
     private Shader shader;
     private float ratio;
@@ -28,7 +29,7 @@ public class GameRenderer implements GLSurfaceView.Renderer, GameRendererListene
     public GameRenderer(ShaderInitiator shaderInitiator, GameView gameView) {
         this.shaderInitiator = shaderInitiator;
         this.gameView = gameView;
-        this.drawables = new ArrayList<>();
+        this.drawables = Collections.synchronizedList(new ArrayList<Drawable>());
 
 
     }
@@ -62,21 +63,25 @@ public class GameRenderer implements GLSurfaceView.Renderer, GameRendererListene
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-        final Iterator<Drawable> iterator = this.drawables.iterator();
-        while (iterator.hasNext()) {
-            final Drawable drawable = iterator.next();
-            if (drawable.shouldBeRemoved()) {
-                iterator.remove();
-                break;
-            }
-            drawable.draw(this.shader);
+        synchronized (this.drawables) {
+            final Iterator<Drawable> iterator = this.drawables.listIterator();
+            while (iterator.hasNext()) {
+                final Drawable drawable = iterator.next();
+                if (drawable.shouldBeRemoved()) {
+                    iterator.remove();
+                    break;
+                }
+                drawable.draw(this.shader);
 
+            }
         }
         this.gameView.requestRender();
     }
 
     public boolean add(Drawable object) {
-        return drawables.add(object);
+        synchronized (this.drawables) {
+            return drawables.add(object);
+        }
     }
 
     @Override

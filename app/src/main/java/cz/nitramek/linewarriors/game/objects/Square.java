@@ -23,26 +23,48 @@ public class Square {
             -1f, 1f, //vlevo nahoře
             1f, 1f, //vpravo nahoře
     };
-    private final FloatBuffer verticesBuffer;
     private final int bytesPerFloat = 4;
+    private FloatBuffer verticesBuffer;
     private FloatBuffer uvsBuffer;
+    private float[] uvs;
 
 
     public Square(int spriteCount) {
+        this.init();
+        recountUvs(spriteCount);
+    }
+
+    public Square(int spriteCountX, int spriteCountY) {
+        this.init();
+        recountUvs(spriteCountX, spriteCountY);
+    }
+
+    private void init() {
         this.verticesBuffer =
                 ByteBuffer.allocateDirect(vertices.length * bytesPerFloat)
                         .order(ByteOrder.nativeOrder())
                         .asFloatBuffer();
         this.verticesBuffer.put(this.vertices).position(0);
-        float[] uvs = new float[]{
-                0.0f, 1.0f / spriteCount,
-                1.0f / spriteCount, 0.0f,
+    }
+
+    private void recountUvs(int spriteCountX, int spriteCountY) {
+        uvs = new float[]{
+                0.0f, 1.0f / spriteCountY,
+                1.0f / spriteCountX, 0.0f,
                 0.0f, 0.0f,
 
-                1.0f / spriteCount, 0.f,
-                0.f, 1.0f / spriteCount,
-                1.0f / spriteCount, 1.0f / spriteCount,
+                1.0f / spriteCountX, 0.f,
+                0.f, 1.0f / spriteCountY,
+                1.0f / spriteCountX, 1.0f / spriteCountY,
         };
+        this.bufferUVs();
+    }
+
+    private void recountUvs(int spriteCount) {
+        this.recountUvs(spriteCount, spriteCount);
+    }
+
+    private void bufferUVs() {
         this.uvsBuffer =
                 ByteBuffer.allocateDirect(uvs.length * bytesPerFloat)
                         .order(ByteOrder.nativeOrder())

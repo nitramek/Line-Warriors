@@ -59,6 +59,10 @@ public abstract class Model {
     public void setPosition(float x, float y){
         this.sprite.getModelMatrix().setPosition(x, y);
     }
+    public RectF getBoundingBox(){
+        return this.sprite.getModelMatrix().getBoundingBox();
+    }
+
 
 
 }

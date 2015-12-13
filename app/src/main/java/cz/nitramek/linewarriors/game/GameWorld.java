@@ -1,7 +1,7 @@
 package cz.nitramek.linewarriors.game;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import cz.nitramek.linewarriors.game.objects.Enemy;
 import cz.nitramek.linewarriors.game.objects.Mage;
@@ -10,6 +10,8 @@ import cz.nitramek.linewarriors.game.objects.Spell;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
 import cz.nitramek.linewarriors.game.utils.GameRendererListener;
+import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
+import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
 import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
@@ -17,17 +19,15 @@ import cz.nitramek.linewarriors.game.utils.Vector;
 /**
  * Must be instantiated
  */
-public class GameWorld implements Runnable {
+public class GameWorld implements Runnable, OnAbilityCast {
     public static final float LINE_Y = -0.75f;
     private final GameRendererListener listener;
+    private final List<Spell> spells;
     /**
      * Reprezents enemies in line, one enemy per given width
      */
     private Enemy[] enemies;
     private MainCharacter mainCharacter;
-
-    private List<Spell> spells;
-
     /**
      * Reprezents square with 1/4 UV mapping
      */
@@ -40,10 +40,10 @@ public class GameWorld implements Runnable {
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
         this.enemies = new Enemy[3];
-        this.square4 = new Square(4);
+        this.square4 = new Square(4, 4);
         final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
         mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
-        this.mainCharacter = new Mage(mainCharacterSprite);
+        this.mainCharacter = new Mage(mainCharacterSprite, this);
         synchronized (this) {
             this.notifyAll();
         }
@@ -54,7 +54,7 @@ public class GameWorld implements Runnable {
         this.worldThread = new Thread(this);
         this.worldThread.setDaemon(true);
         this.worldThread.start();
-        this.spells = new ArrayList<>();
+        this.spells = new CopyOnWriteArrayList<>();
 
     }
 
@@ -103,11 +103,17 @@ public class GameWorld implements Runnable {
             for (int i = 0; i < enemies.length; i++) {
                 Enemy e = enemies[i];
                 boolean collision = false;
-                for (Spell s : spells) {
-                    //při kolizi způsobí damage
-                    s.collide(e);
-                }
                 if (e != null) {
+                    synchronized (this.spells) {
+                        for (Spell s : spells) {
+                            s.animate();
+                            if (s.collide(e)) {
+                                s.requestRemoval();
+                            }
+
+                        }
+                    }
+
                     //pokud kolidují dávají damage
                     if (!e.collide(mainCharacter)) {
                         e.move(new Vector(0f, -1f));
@@ -144,6 +150,42 @@ public class GameWorld implements Runnable {
         worldThread = new Thread(this);
         this.worldThread.setDaemon(true);
         this.worldThread.start();
+    }
+
+    @Override
+    public void onCast(SpellManager.SpellType type) {
+        switch (type) {
+            case FIRE:
+                final Sprite spellSprite = new Sprite(
+                        new Square(1, 4),
+                        1,
+                        4,
+                        TextureManager.getInstance().getTextureId(TextureKey.EXPLOSION)
+                );
+                spellSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
+                spellSprite.getModelMatrix().setPosition(
+                        this.mainCharacter.getBoundingBox().left + 0.1f,
+                        this.mainCharacter.getBoundingBox().top + 0.1f);
+                Spell s = new Spell(spellSprite, 5) {
+                    int maxY = 4;
+                    int currentY = 0;
+
+                    @Override
+                    public void animate() {
+                        this.currentY = ++this.currentY;
+                        if (currentY > maxY) {
+                            this.requestRemoval();
+                            GameWorld.this.spells.remove(this);
+                        }
+                        this.sprite.setSpriteY(this.currentY);
+                    }
+                };
+                this.listener.addDrawable(spellSprite);
+                synchronized (this.spells) {
+                    this.spells.add(s);
+                }
+                break;
+        }
     }
 }
 

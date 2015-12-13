@@ -3,22 +3,30 @@ package cz.nitramek.linewarriors.game.objects;
 
 import android.graphics.RectF;
 
+import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
+import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
 
 public abstract class MainCharacter extends Model {
 
+    private final OnAbilityCast listener;
     float speed;
 
     boolean movable;
 
-    private int casting = 0;
     private int health;
 
     public MainCharacter(Sprite sprite) {
+        this(sprite, null);
+    }
+
+    public MainCharacter(Sprite sprite, OnAbilityCast listener) {
         super(sprite);
+        this.listener = listener;
         this.speed = 0.005f;
         this.movable = true;
     }
+
 
     @Override
     public float getSpeed() {
@@ -45,13 +53,13 @@ public abstract class MainCharacter extends Model {
         this.movable = movable;
     }
 
-    public void castFirstAbility() {
-        casting = 0;
+    protected void cast(SpellManager.SpellType type) {
+        this.listener.onCast(type);
     }
+    public abstract void castFirstAbility();
 
-    public int getCasting() {
-        return casting;
-    }
+
+
 
     public void obtainDamage(int damage) {
         this.health -= damage;

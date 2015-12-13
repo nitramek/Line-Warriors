@@ -5,9 +5,10 @@ public enum TextureKey {
     BACKGROUND("drawable/background"),
     MAGE("drawable/redmage_m"),
     JENOVA("drawable/jenova2"),
-    EXPLOSION("drawable/explosion");
+    EXPLOSION("drawable/fireball");
 
     public final String resourcePath;
+
     TextureKey(String s) {
         this.resourcePath = s;
     }

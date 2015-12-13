@@ -1,7 +1,7 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
-public class Spell extends Model{
+public abstract class Spell extends Model {
     private int damage;
 
     public Spell(Sprite sprite, int damage) {
@@ -18,10 +18,12 @@ public class Spell extends Model{
     @Override
     public boolean collide(Model other) {
         final boolean collide = super.collide(other);
-        if(collide && other instanceof Enemy){
+        if (collide && other instanceof Enemy) {
             ((Enemy) other).obtainDamage(this.damage);
         }
         return collide;
     }
+
+    public abstract void animate();
 
 }
