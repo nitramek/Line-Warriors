@@ -20,6 +20,7 @@ import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.Controller;
 import cz.nitramek.linewarriors.game.GameView;
 import cz.nitramek.linewarriors.game.GameWorld;
+import cz.nitramek.linewarriors.game.utils.Monster;
 
 public class GameActivity extends Activity {
 
@@ -88,7 +89,7 @@ public class GameActivity extends Activity {
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    GameActivity.this.gameView.getWorld().addEnemy();
+                    GameActivity.this.gameView.getWorld().addEnemy(Monster.valueOf((String) v.getTag()));
                 }
             });
         }

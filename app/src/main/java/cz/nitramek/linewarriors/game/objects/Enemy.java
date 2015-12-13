@@ -1,20 +1,26 @@
 package cz.nitramek.linewarriors.game.objects;
 
 
+import cz.nitramek.linewarriors.game.utils.Monster;
+
 public class Enemy extends Model {
     private int damage;
     private int health;
 
 
-    public Enemy(int damage, int health, Sprite sprite) {
+    private float speed;
+
+
+    public Enemy(Monster monster, Sprite sprite) {
         super(sprite);
-        this.damage = damage;
-        this.health = health;
+        this.damage = monster.damage;
+        this.health = monster.health;
+        this.speed = monster.speed;
     }
 
     @Override
     public float getSpeed() {
-        return 0.005f;
+        return this.speed;
     }
 
     public boolean behindLine(float y) {
@@ -35,7 +41,7 @@ public class Enemy extends Model {
     @Override
     public boolean collide(Model other) {
         final boolean collide = super.collide(other);
-        if(collide && other instanceof MainCharacter){
+        if (collide && other instanceof MainCharacter) {
             ((MainCharacter) other).obtainDamage(this.damage);
         }
         return collide;

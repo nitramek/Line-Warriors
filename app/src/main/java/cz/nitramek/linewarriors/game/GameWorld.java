@@ -10,6 +10,7 @@ import cz.nitramek.linewarriors.game.objects.Spell;
 import cz.nitramek.linewarriors.game.objects.Sprite;
 import cz.nitramek.linewarriors.game.objects.Square;
 import cz.nitramek.linewarriors.game.utils.GameRendererListener;
+import cz.nitramek.linewarriors.game.utils.Monster;
 import cz.nitramek.linewarriors.game.utils.OnAbilityCast;
 import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
@@ -53,7 +54,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
             this.notifyAll();
         }
         this.listener.addDrawable(mainCharacterSprite);
-        this.addEnemy();
+        this.addEnemy(Monster.JENOVA);
 //        this.addEnemy();
 //        this.addEnemy();
         this.worldThread = new Thread(this);
@@ -63,13 +64,13 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     }
 
-    public void addEnemy() {
+    public void addEnemy(Monster monster) {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
-            final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.JENOVA));
+            final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.valueOf(monster.toString())));
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().setPosition(-0.75f + freeIndex * 1.5f / CAPACITY, 0.75f);
-            Enemy e = new Enemy(5, 10, enemySprite);
+            Enemy e = new Enemy(monster, enemySprite);
             enemies[freeIndex] = e;
             this.listener.addDrawable(enemySprite);
         }

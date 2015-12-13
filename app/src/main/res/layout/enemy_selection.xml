@@ -7,8 +7,14 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/imageViewJenova"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/jenova_head" />
+        android:src="@drawable/jenova_head"
+        android:tag="JENOVA" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/barret_head"
+        android:tag="BARRET" />
 </LinearLayout>
