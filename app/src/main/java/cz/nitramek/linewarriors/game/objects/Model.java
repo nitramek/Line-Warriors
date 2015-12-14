@@ -58,7 +58,7 @@ public abstract class Model {
 
     public abstract float getSpeed();
 
-    public void requestRemoval() {
+    public void requestSpriteRemoval() {
         this.sprite.setRemove(true);
     }
 

@@ -12,6 +12,7 @@ public final class Constants {
     public static final int STARTING_ESCAPES = 50;
     public static final String SP_STATS = "STATS";
     public static final String SP_KEY_KILLS = "KILLS";
+    public static final String GAME_OVER_MSS = "game_over";
 
     private Constants() {
     }

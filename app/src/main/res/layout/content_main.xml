@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -13,31 +14,105 @@
     tools:context="cz.nitramek.linewarriors.activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:id="@+id/main_btn_start_as_server"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding"
-        android:text="@string/start_as_server" />
-
-    <Button
-        android:id="@+id/main_btn_start_as_client"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding"
-        android:text="@string/start_as_clinet" />
-
-    <Button
-        android:id="@+id/main_btn_start_training"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding"
-        android:text="@string/main_btn_start_training" />
-
     <TextView
-        android:id="@+id/main_tv_kills"
+        android:id="@+id/main_tv_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:fontFamily=""
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@android:color/white"
+        android:textSize="100sp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/main_btn_previous_hero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:src="@android:drawable/arrow_up_float"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/main_iv_hero_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@drawable/character_redmage_m_one" />
+
+        <ImageButton
+            android:id="@+id/main_btn_next_hero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:src="@android:drawable/arrow_down_float" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/main_btn_start_as_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="#999"
+            android:padding="@dimen/padding"
+            android:text="@string/start_as_server"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/main_btn_start_as_client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="#999"
+            android:padding="@dimen/padding"
+
+            android:text="@string/start_as_clinet"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/main_btn_start_training"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="#999"
+            android:padding="@dimen/padding"
+
+            android:text="@string/main_btn_start_training"
+            android:textColor="#FFF" />
+
+        <TextView
+            android:id="@+id/main_tv_kills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/previewControls"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
 
 </LinearLayout>
+

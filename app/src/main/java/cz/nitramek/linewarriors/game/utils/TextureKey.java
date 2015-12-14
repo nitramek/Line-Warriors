@@ -8,7 +8,8 @@ public enum TextureKey {
     EXPLOSION("drawable/spell_fireball"),
     BARRET("drawable/enemy_barret"),
     BAHAMOUT("drawable/enemy_bahamut"),
-    MAGICPOT("drawable/enemy_magicpot"),;
+    MAGICPOT("drawable/enemy_magicpot"),
+    MAGE_FEMALE("drawable/character_redmage_f");
 
     public final String resourcePath;
 

@@ -38,7 +38,7 @@ public class Enemy extends Model {
     public void obtainDamage(int damage) {
         this.health -= damage;
         if (this.isDead()) {
-            this.requestRemoval();
+            this.requestSpriteRemoval();
             this.stateChangedListener.onDeath(true);
         }
     }

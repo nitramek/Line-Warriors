@@ -32,13 +32,14 @@ import cz.nitramek.linewarriors.game.utils.Monster;
 import cz.nitramek.linewarriors.networking.Networker;
 import cz.nitramek.linewarriors.networking.NsdHelper;
 import cz.nitramek.linewarriors.util.Role;
+import cz.nitramek.linewarriors.util.Skin;
 
 public class GameActivity extends Activity implements GameStateListener, NsdHelper.DiscoveryListener, Networker.OnMonsterListener {
 
     public static final int GOLD_MSG = 0;
     public static final int HEALTH_MSG = 1;
     public static final int REMAINING_ESCAPES_MGS = 2;
-    private static final int KILLED_MSG = 3;
+
     private GameView gameView;
     private Controller controller;
     private RelativeLayout rl;
@@ -47,11 +48,9 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
     private Handler handler;
     private TextView healthView;
     private TextView escapesView;
-
     private Networker networker;
     private NsdHelper nsdHelper;
     private Role role;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +60,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
 
         final Intent intent = super.getIntent();
         role = (Role) intent.getSerializableExtra(MainActivity.EXTRA_CONNECT_AS);
+        final Skin selectedSkin = (Skin) intent.getSerializableExtra(Skin.SKIN_TAG);
         switch (role) {
             case SERVER:
                 this.nsdHelper.registerService();
@@ -69,23 +69,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
                 this.nsdHelper.startDiscovery();
                 break;
         }
-        handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case GOLD_MSG:
-                        GameActivity.this.goldView.setText(String.format("G: %s", String.valueOf(msg.arg1)));
-                        break;
-                    case HEALTH_MSG:
-                        GameActivity.this.healthView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
-                        break;
-                    case REMAINING_ESCAPES_MGS:
-                        GameActivity.this.escapesView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
-                        break;
-
-                }
-            }
-        };
+        handler = new MyHandler(Looper.getMainLooper(), this);
 
         try {
             gameView = new GameView(this, new GameView.InitiationCallback() {
@@ -97,6 +81,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
                             GameActivity.this.gameView.getHeight());
                     GameActivity.this.gameView.setOnTouchListener(GameActivity.this.controller);
                     GameActivity.this.gameView.getWorld().setGameStateListener(GameActivity.this);
+                    GameActivity.this.gameView.getWorld().setSkin(selectedSkin);
                     GameActivity.this.networker.setOnMonsterListener(GameActivity.this);
                 }
             });
@@ -250,5 +235,38 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
     @Override
     public void onMonsterRecieved(Monster monster) {
         GameActivity.this.gameView.getWorld().addEnemy(monster);
+    }
+
+    static class MyHandler extends Handler {
+        private final GameActivity activity;
+
+        public MyHandler(Looper looper, GameActivity activity) {
+            super(looper);
+            this.activity = activity;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case GOLD_MSG:
+                    activity.goldView.setText(String.format("G: %s", String.valueOf(msg.arg1)));
+                    break;
+                case HEALTH_MSG:
+                    activity.healthView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
+                    break;
+                case REMAINING_ESCAPES_MGS:
+                    activity.escapesView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
+                    //finish since he lost
+                    if (msg.arg1 <= 0) {
+                        Toast.makeText(activity, msg.arg1, Toast.LENGTH_SHORT).show();
+                        activity.networker.sendMessage(Constants.GAME_OVER_MSS);
+                        activity.finish();
+                    }
+                    break;
+
+
+            }
+        }
+
     }
 }

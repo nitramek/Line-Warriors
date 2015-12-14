@@ -1,54 +1,56 @@
 package cz.nitramek.linewarriors.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.utils.Constants;
 import cz.nitramek.linewarriors.util.Role;
+import cz.nitramek.linewarriors.util.Skin;
 
-public class MainActivity extends AppCompatActivity {
-
-    public static final int CONNECT_AS_SERVER = 1;
+public class MainActivity extends Activity {
     public static final String EXTRA_CONNECT_AS = "CONNECT_AS";
-    public static final int CONNECT_AS_CLIENT = 2;
-    public static final int CONNECT_AS_NONE = 0;
+
+    private ImageView iv;
+
+    private Skin skins[] = Skin.values();
+    private int selectedSkinIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.content_main);
 
+        final TextView headLine = (TextView) findViewById(R.id.main_tv_headline);
+        headLine.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/wolf.ttf"));
+        final Button clientButton = (Button) findViewById(R.id.main_btn_start_as_client);
+        final Button serverButton = (Button) findViewById(R.id.main_btn_start_as_server);
+        final Button trainingButton = (Button) findViewById(R.id.main_btn_start_training);
+        final ImageButton previousHeroBtn = (ImageButton) findViewById(R.id.main_btn_previous_hero);
+        final ImageButton nextHeroBtn = (ImageButton) findViewById(R.id.main_btn_next_hero);
+        final TextView tv = (TextView) findViewById(R.id.main_tv_kills);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Button clientButton = (Button) findViewById(R.id.main_btn_start_as_client);
-        Button serverButton = (Button) findViewById(R.id.main_btn_start_as_server);
-        Button trainingButton = (Button) findViewById(R.id.main_btn_start_training);
         clientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra(EXTRA_CONNECT_AS, Role.CLIENT);
-                Toast.makeText(MainActivity.this, "Hledám klienty", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                startGame(Role.CLIENT, R.string.clientSart);
             }
         });
         serverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra(EXTRA_CONNECT_AS, Role.SERVER);
-                Toast.makeText(MainActivity.this, "Hledám servery", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                startGame(Role.SERVER, R.string.serverStart);
             }
         });
         final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.welcome);
@@ -56,14 +58,48 @@ public class MainActivity extends AppCompatActivity {
         trainingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra(EXTRA_CONNECT_AS, Role.NONE);
-                startActivity(intent);
+                startGame(Role.NONE, R.string.trainingStart);
             }
         });
-        TextView tv = (TextView) findViewById(R.id.main_tv_kills);
+        iv = (ImageView) findViewById(R.id.main_iv_hero_selection);
+
         final SharedPreferences preferences = this.getSharedPreferences(Constants.SP_STATS, MODE_PRIVATE);
         tv.setText(String.format("Max kills in traing mode: %d", preferences.getInt(Constants.SP_KEY_KILLS, 0)));
+
+
+        previousHeroBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.selectedSkinIndex--;
+                if (MainActivity.this.selectedSkinIndex <= 0) {
+                    v.setVisibility(View.INVISIBLE);
+                }
+                nextHeroBtn.setVisibility(View.VISIBLE);
+                iv.setImageResource(skins[selectedSkinIndex].headDrawableId);
+                iv.invalidate();
+            }
+        });
+
+        nextHeroBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.selectedSkinIndex++;
+                if (MainActivity.this.selectedSkinIndex >= MainActivity.this.skins.length - 1) {
+                    v.setVisibility(View.INVISIBLE);
+                }
+                previousHeroBtn.setVisibility(View.VISIBLE);
+                iv.setImageResource(skins[selectedSkinIndex].headDrawableId);
+                iv.invalidate();
+            }
+        });
+    }
+
+    private void startGame(Role role, @StringRes int messageId) {
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        intent.putExtra(EXTRA_CONNECT_AS, role);
+        intent.putExtra(Skin.SKIN_TAG, skins[this.selectedSkinIndex]);
+        Toast.makeText(MainActivity.this, messageId, Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 
     @Override

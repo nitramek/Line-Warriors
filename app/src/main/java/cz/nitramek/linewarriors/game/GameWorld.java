@@ -18,6 +18,7 @@ import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
 import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
+import cz.nitramek.linewarriors.util.Skin;
 
 /**
  * Must be instantiated
@@ -151,7 +152,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                         for (Spell s : spells) {
                             s.animate();
                             if (s.collide(e)) {
-                                s.requestRemoval();
+                                s.requestSpriteRemoval();
                             }
 
                         }
@@ -166,13 +167,13 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
                     }
                     if (e.behindLine(LINE_Y)) {
-                        e.requestRemoval();
+                        e.requestSpriteRemoval();
                         this.enemies[i] = null;
                         this.remainingEscapes--;
                         this.fireEscapedChanged();
                     }
                     if (e.isDead()) {
-                        e.requestRemoval();
+                        e.requestSpriteRemoval();
                         this.gold += e.getMonster().reward * 1.25f;
                         this.fireGoldChanged();
                         enemies[i] = null;
@@ -228,7 +229,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     public void animate() {
                         this.currentY = ++this.currentY;
                         if (currentY > maxY) {
-                            this.requestRemoval();
+                            this.requestSpriteRemoval();
                             GameWorld.this.spells.remove(this);
                         }
                         this.sprite.setSpriteY(this.currentY);
@@ -245,7 +246,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     @Override
     public void onDeath(boolean enemy) {
         if (!enemy) {
-            this.mainCharacter.requestRemoval();
+            this.mainCharacter.requestSpriteRemoval();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -274,6 +275,14 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
     public void setGameStateListener(GameStateListener gameStateListener) {
         this.gameStateListener = gameStateListener;
+    }
+
+    public void setSkin(Skin skin) {
+        final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(skin.textureKey));
+        mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
+        this.mainCharacter.requestSpriteRemoval();
+        this.mainCharacter.setSprite(mainCharacterSprite);
+        this.listener.addDrawable(mainCharacterSprite);
     }
 }
 

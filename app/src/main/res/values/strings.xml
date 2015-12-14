@@ -8,4 +8,9 @@
     <string name="start_as_server">Zapnout jako server</string>
     <string name="start_as_clinet">Zapnout jako klient</string>
     <string name="main_btn_start_training">Trénink</string>
+    <string name="clientSart">Hledám server</string>
+    <string name="serverStart">Hledám klienty</string>
+    <string name="trainingStart">V bestiáři si můžeš vybírat příšery</string>
+    <string name="previewControls">PREWIEW verze: kouzlíte 2x potapáním</string>
+    <string name="gameOverLose">Prohrál jsi!</string>
 </resources>
