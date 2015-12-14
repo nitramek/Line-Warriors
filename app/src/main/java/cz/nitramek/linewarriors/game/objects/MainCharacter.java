@@ -42,15 +42,19 @@ public abstract class MainCharacter extends Model {
         if (this.movable) {
             final RectF b = this.sprite.getModelMatrix().getBoundingBox();
 
-            final boolean isOut = b.top < 0.9f &&
-                    b.left > -0.9f &&
-                    b.bottom > -0.9f &&
-                    b.right < 0.9f;
-            if (isOut) {
+
+            if (isOut(b)) {
                 super.move(direction);
                 //TODO vyřešit zaseknutí na kraji
             }
         }
+    }
+
+    private boolean isOut(RectF b) {
+        return b.top < 0.9f &&
+                        b.left > -0.95f &&
+                        b.bottom > -0.95f &&
+                        b.right < 0.95f;
     }
 
     public void setMovable(boolean movable) {
