@@ -34,11 +34,12 @@ import cz.nitramek.linewarriors.networking.NsdHelper;
 import cz.nitramek.linewarriors.util.Role;
 import cz.nitramek.linewarriors.util.Skin;
 
-public class GameActivity extends Activity implements GameStateListener, NsdHelper.DiscoveryListener, Networker.OnMonsterListener {
+public class GameActivity extends Activity implements GameStateListener, NsdHelper.DiscoveryListener, Networker.GameActivityListener {
 
     public static final int GOLD_MSG = 0;
     public static final int HEALTH_MSG = 1;
     public static final int REMAINING_ESCAPES_MGS = 2;
+    public static final int GAME_WON = 3;
 
     private GameView gameView;
     private Controller controller;
@@ -55,7 +56,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        networker = new Networker();
+        networker = new Networker(this);
         nsdHelper = new NsdHelper(this, networker);
 
         final Intent intent = super.getIntent();
@@ -237,6 +238,11 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
         GameActivity.this.gameView.getWorld().addEnemy(monster);
     }
 
+    @Override
+    public void gameOver() {
+        Message.obtain(this.handler, GAME_WON).sendToTarget();
+    }
+
     static class MyHandler extends Handler {
         private final GameActivity activity;
 
@@ -258,10 +264,14 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
                     activity.escapesView.setText(String.format("H: %s", String.valueOf(msg.arg1)));
                     //finish since he lost
                     if (msg.arg1 <= 0) {
-                        Toast.makeText(activity, msg.arg1, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.game_over_lose, Toast.LENGTH_SHORT).show();
                         activity.networker.sendMessage(Constants.GAME_OVER_MSS);
                         activity.finish();
                     }
+                    break;
+                case GAME_WON:
+                    Toast.makeText(activity, R.string.game_over_win, Toast.LENGTH_SHORT).show();
+                    activity.finish();
                     break;
 
 

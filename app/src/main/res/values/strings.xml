@@ -12,5 +12,6 @@
     <string name="serverStart">Hledám klienty</string>
     <string name="trainingStart">V bestiáři si můžeš vybírat příšery</string>
     <string name="previewControls">PREWIEW verze: kouzlíte 2x potapáním</string>
-    <string name="gameOverLose">Prohrál jsi!</string>
+    <string name="game_over_lose">Prohrál jsi!</string>
+    <string name="game_over_win">Vyhrál jsi!</string>
 </resources>

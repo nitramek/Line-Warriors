@@ -9,7 +9,8 @@ public enum TextureKey {
     BARRET("drawable/enemy_barret"),
     BAHAMOUT("drawable/enemy_bahamut"),
     MAGICPOT("drawable/enemy_magicpot"),
-    MAGE_FEMALE("drawable/character_redmage_f");
+    MAGE_FEMALE("drawable/character_redmage_f"),
+    DEADPOOL("drawable/character_deadpool");
 
     public final String resourcePath;
 

@@ -147,16 +147,17 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
             for (int i = 0; i < enemies.length; i++) {
                 Enemy e = enemies[i];
                 boolean collision = false;
-                if (e != null) {
-                    synchronized (this.spells) {
-                        for (Spell s : spells) {
-                            s.animate();
-                            if (s.collide(e)) {
-                                s.requestSpriteRemoval();
-                            }
-
+                synchronized (this.spells) {
+                    for (Spell s : spells) {
+                        s.animate();
+                        if (e != null && s.collide(e)) {
+                            s.requestSpriteRemoval();
                         }
+
                     }
+                }
+                if (e != null) {
+
                     //pokud kolidují dávají damage
                     if (mainCharacter.isDead() || !e.collide(mainCharacter)) {
                         e.move(new Vector(0f, -1f));

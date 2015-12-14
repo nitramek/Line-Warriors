@@ -6,7 +6,8 @@ import cz.nitramek.linewarriors.game.utils.TextureKey;
 
 public enum Skin {
     MAGE_MALE(R.drawable.character_redmage_m_one, TextureKey.MAGE),
-    MAGE_FEMALE(R.drawable.character_redmage_f_one, TextureKey.MAGE_FEMALE);
+    MAGE_FEMALE(R.drawable.character_redmage_f_one, TextureKey.MAGE_FEMALE),
+    DEADPOOL(R.drawable.character_deadpool_one, TextureKey.DEADPOOL);
 
     public static final String SKIN_TAG = "skin";
     public final int headDrawableId;
