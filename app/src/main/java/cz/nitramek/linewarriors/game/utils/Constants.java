@@ -9,7 +9,7 @@ public final class Constants {
     public static final int STARTING_GOLD = 50;
     public static final int STARTING_HEALTH = 20;
     public static final int RESPAWN_TIME = 5;
-    public static final int STARTING_ESCAPES = 1;
+    public static final int STARTING_ESCAPES = 20;
     public static final String SP_STATS = "STATS";
     public static final String SP_KEY_KILLS = "KILLS";
     public static final String GAME_OVER_MSS = "game_over";
