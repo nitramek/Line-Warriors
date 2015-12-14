@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.utils.Constants;
+import cz.nitramek.linewarriors.util.MediaHelper;
 import cz.nitramek.linewarriors.util.Role;
 import cz.nitramek.linewarriors.util.Skin;
 
@@ -40,6 +40,8 @@ public class MainActivity extends Activity {
         final ImageButton previousHeroBtn = (ImageButton) findViewById(R.id.main_btn_previous_hero);
         final ImageButton nextHeroBtn = (ImageButton) findViewById(R.id.main_btn_next_hero);
         final TextView tv = (TextView) findViewById(R.id.main_tv_kills);
+        MediaHelper.context = this;
+        MediaHelper.playSound(R.raw.welcome);
 
         clientButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,8 +55,6 @@ public class MainActivity extends Activity {
                 startGame(Role.SERVER, R.string.serverStart);
             }
         });
-        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.welcome);
-        mediaPlayer.start();
         trainingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

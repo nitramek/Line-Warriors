@@ -3,6 +3,7 @@ package cz.nitramek.linewarriors.game;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import cz.nitramek.linewarriors.R;
 import cz.nitramek.linewarriors.game.objects.Enemy;
 import cz.nitramek.linewarriors.game.objects.Mage;
 import cz.nitramek.linewarriors.game.objects.MainCharacter;
@@ -18,6 +19,7 @@ import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
 import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
+import cz.nitramek.linewarriors.util.MediaHelper;
 import cz.nitramek.linewarriors.util.Skin;
 
 /**
@@ -228,6 +230,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
 
                     @Override
                     public void animate() {
+                        MediaHelper.playSound(R.raw.fire);
                         this.currentY = ++this.currentY;
                         if (currentY > maxY) {
                             this.requestSpriteRemoval();
@@ -248,6 +251,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     public void onDeath(boolean enemy) {
         if (!enemy) {
             this.mainCharacter.requestSpriteRemoval();
+            MediaHelper.playSound(R.raw.death);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -261,6 +265,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     //respawn
                     final Sprite mainCharacterSprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.MAGE));
                     mainCharacterSprite.getModelMatrix().scale(0.15f, 0.15f * GameWorld.this.listener.getRatio());
+                    //respawn
+                    MediaHelper.playSound(R.raw.back);
                     GameWorld.this.mainCharacter.setSprite(mainCharacterSprite);
                     GameWorld.this.mainCharacter.resetHealth();
                     GameWorld.this.listener.addDrawable(mainCharacterSprite);

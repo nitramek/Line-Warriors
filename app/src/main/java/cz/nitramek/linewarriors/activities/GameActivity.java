@@ -31,6 +31,7 @@ import cz.nitramek.linewarriors.game.utils.GameStateListener;
 import cz.nitramek.linewarriors.game.utils.Monster;
 import cz.nitramek.linewarriors.networking.Networker;
 import cz.nitramek.linewarriors.networking.NsdHelper;
+import cz.nitramek.linewarriors.util.MediaHelper;
 import cz.nitramek.linewarriors.util.Role;
 import cz.nitramek.linewarriors.util.Skin;
 
@@ -58,6 +59,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
         super.onCreate(savedInstanceState);
         networker = new Networker(this);
         nsdHelper = new NsdHelper(this, networker);
+        MediaHelper.context = this;
 
         final Intent intent = super.getIntent();
         role = (Role) intent.getSerializableExtra(MainActivity.EXTRA_CONNECT_AS);
