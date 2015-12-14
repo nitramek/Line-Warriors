@@ -69,7 +69,9 @@ public class Networker implements NsdHelper.ServiceListener {
         try {
             listeningThread.running = false;
             listeningThread.join();
-            sendingThread.join();
+            if (sendingThread != null) {
+                sendingThread.join();
+            }
         } catch (InterruptedException e) {
             Log.e(Networker.class.getName(), "", e);
         }
