@@ -38,6 +38,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
     public static final int GOLD_MSG = 0;
     public static final int HEALTH_MSG = 1;
     public static final int REMAINING_ESCAPES_MGS = 2;
+    private static final int KILLED_MSG = 3;
     private GameView gameView;
     private Controller controller;
     private RelativeLayout rl;
@@ -232,11 +233,14 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
     @Override
     public void escapedChanged(int remainingEscapes) {
         Message.obtain(handler, REMAINING_ESCAPES_MGS, remainingEscapes, 0).sendToTarget();
-        SharedPreferences sp = this.getPreferences(MODE_PRIVATE);
-        final SharedPreferences.Editor edit = sp.edit();
-        edit.putInt("KILLS", Constants.STARTING_ESCAPES - remainingEscapes);
-        edit.apply();
 
+    }
+
+    @Override
+    public void killedChanged(int killed) {
+        final SharedPreferences.Editor edit = this.getPreferences(MODE_PRIVATE).edit();
+        edit.putInt("KILLS", killed);
+        edit.apply();
     }
 
     @Override

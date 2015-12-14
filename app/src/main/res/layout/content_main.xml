@@ -17,19 +17,21 @@
         android:id="@+id/main_btn_start_as_server"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
         android:text="@string/start_as_server" />
 
     <Button
         android:id="@+id/main_btn_start_as_client"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
         android:text="@string/start_as_clinet" />
 
     <Button
         android:id="@+id/main_btn_start_training"
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
         android:text="@string/main_btn_start_training" />
 
     <TextView

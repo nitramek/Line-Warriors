@@ -48,6 +48,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private GameStateListener gameStateListener;
     private Role role;
     private Networker networker;
+    private int killed = 0;
 
     public GameWorld(final GameRendererListener listener) {
         this.listener = listener;
@@ -107,6 +108,12 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private void fireEscapedChanged() {
         if (this.gameStateListener != null) {
             this.gameStateListener.escapedChanged(this.remainingEscapes);
+        }
+    }
+
+    private void fireKilledChanged() {
+        if (this.gameStateListener != null) {
+            this.gameStateListener.killedChanged(this.killed);
         }
     }
 
@@ -261,6 +268,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     GameWorld.this.fireHealthChanged();
                 }
             }).start();
+        } else {
+            this.killed++;
         }
     }
 

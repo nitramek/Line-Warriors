@@ -8,4 +8,5 @@ public interface GameStateListener {
 
     void escapedChanged(int remainingEscapes);
 
+    void killedChanged(int killed);
 }

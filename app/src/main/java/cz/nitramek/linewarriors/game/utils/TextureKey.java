@@ -3,10 +3,10 @@ package cz.nitramek.linewarriors.game.utils;
 
 public enum TextureKey {
     BACKGROUND("drawable/background"),
-    MAGE("drawable/redmage_m"),
-    JENOVA("drawable/jenova"),
-    EXPLOSION("drawable/fireball"),
-    BARRET("drawable/barret");
+    MAGE("drawable/character_redmage_m"),
+    JENOVA("drawable/enemy_jenova"),
+    EXPLOSION("drawable/spell_fireball"),
+    BARRET("drawable/enemy_barret");
 
     public final String resourcePath;
 

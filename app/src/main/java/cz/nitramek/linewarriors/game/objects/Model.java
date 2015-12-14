@@ -11,6 +11,7 @@ public abstract class Model {
     protected Sprite sprite;
 
 
+    private SpriteDirection direction;
     public Model(Sprite sprite) {
         this.sprite = sprite;
     }
@@ -25,14 +26,19 @@ public abstract class Model {
         //represents X
         if (direction.angleDegrees() > 315f) {
             this.sprite.setSpriteY(SpriteDirection.RIGHT.row);
+            this.direction = SpriteDirection.RIGHT;
         } else if (direction.angleDegrees() > 225f) {
             this.sprite.setSpriteY(SpriteDirection.BOTTOM.row);
+            this.direction = SpriteDirection.BOTTOM;
         } else if (direction.angleDegrees() > 135.f) {
             this.sprite.setSpriteY(SpriteDirection.LEFT.row);
+            this.direction = SpriteDirection.LEFT;
         } else if (direction.angleDegrees() > 45.f) {
             this.sprite.setSpriteY(SpriteDirection.TOP.row);
+            this.direction = SpriteDirection.TOP;
         } else {
             this.sprite.setSpriteY(SpriteDirection.RIGHT.row);
+            this.direction = SpriteDirection.RIGHT;
         }
         direction.multiply(this.getSpeed());
         this.sprite.getModelMatrix().translate(direction);
@@ -64,5 +70,7 @@ public abstract class Model {
         return this.sprite.getModelMatrix().getBoundingBox();
     }
 
-
+    public SpriteDirection getDirection() {
+        return direction;
+    }
 }
