@@ -18,8 +18,6 @@ import cz.nitramek.linewarriors.game.utils.SpellManager;
 import cz.nitramek.linewarriors.game.utils.TextureKey;
 import cz.nitramek.linewarriors.game.utils.TextureManager;
 import cz.nitramek.linewarriors.game.utils.Vector;
-import cz.nitramek.linewarriors.networking.Networker;
-import cz.nitramek.linewarriors.util.Role;
 
 /**
  * Must be instantiated
@@ -46,8 +44,6 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     private int remainingEscapes = Constants.STARTING_ESCAPES;
 
     private GameStateListener gameStateListener;
-    private Role role;
-    private Networker networker;
     private int killed = 0;
 
     public GameWorld(final GameRendererListener listener) {
@@ -74,7 +70,8 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
     public void addEnemy(Monster monster) {
         int freeIndex = findFreeSpot();
         if (freeIndex > -1) {
-            final Sprite enemySprite = new Sprite(square4, 4, 4, TextureManager.getInstance().getTextureId(TextureKey.valueOf(monster.toString())));
+            final Sprite enemySprite = new Sprite(square4, 4, 4,
+                    TextureManager.getInstance().getTextureId(TextureKey.valueOf(monster.toString())));
             enemySprite.getModelMatrix().scale(0.15f, 0.15f * this.listener.getRatio());
             enemySprite.getModelMatrix().setPosition(-0.75f + freeIndex * 1.5f / CAPACITY, 0.75f);
             Enemy e = new Enemy(enemySprite, monster, this);
@@ -176,7 +173,7 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
                     }
                     if (e.isDead()) {
                         e.requestRemoval();
-                        this.gold += e.getMonster().reward;
+                        this.gold += e.getMonster().reward * 1.25f;
                         this.fireGoldChanged();
                         enemies[i] = null;
                     }
@@ -270,28 +267,13 @@ public class GameWorld implements Runnable, OnAbilityCast, StateChangedListener 
             }).start();
         } else {
             this.killed++;
+            this.fireKilledChanged();
         }
     }
 
 
     public void setGameStateListener(GameStateListener gameStateListener) {
         this.gameStateListener = gameStateListener;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Networker getNetworker() {
-        return networker;
-    }
-
-    public void setNetworker(Networker networker) {
-        this.networker = networker;
     }
 }
 

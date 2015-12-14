@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cz.nitramek.linewarriors.R;
+import cz.nitramek.linewarriors.game.utils.Constants;
 import cz.nitramek.linewarriors.util.Role;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,8 +62,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         TextView tv = (TextView) findViewById(R.id.main_tv_kills);
-        final SharedPreferences preferences = this.getPreferences(MODE_PRIVATE);
-        tv.setText(String.format("Max kills in traing mode: %d", preferences.getInt("KILLS", 0)));
+        final SharedPreferences preferences = this.getSharedPreferences(Constants.SP_STATS, MODE_PRIVATE);
+        tv.setText(String.format("Max kills in traing mode: %d", preferences.getInt(Constants.SP_KEY_KILLS, 0)));
     }
 
+    @Override
+    protected void onResume() {
+        TextView tv = (TextView) findViewById(R.id.main_tv_kills);
+        final SharedPreferences preferences = this.getSharedPreferences(Constants.SP_STATS, MODE_PRIVATE);
+        tv.setText(String.format("Max kills in traing mode: %d", preferences.getInt(Constants.SP_KEY_KILLS, 0)));
+        super.onResume();
+    }
 }

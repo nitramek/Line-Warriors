@@ -97,9 +97,7 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
                             GameActivity.this.gameView.getHeight());
                     GameActivity.this.gameView.setOnTouchListener(GameActivity.this.controller);
                     GameActivity.this.gameView.getWorld().setGameStateListener(GameActivity.this);
-                    GameActivity.this.gameView.getWorld().setRole(role);
                     GameActivity.this.networker.setOnMonsterListener(GameActivity.this);
-                    GameActivity.this.gameView.getWorld().setNetworker(networker);
                 }
             });
         } catch (IOException e) {
@@ -238,8 +236,8 @@ public class GameActivity extends Activity implements GameStateListener, NsdHelp
 
     @Override
     public void killedChanged(int killed) {
-        final SharedPreferences.Editor edit = this.getPreferences(MODE_PRIVATE).edit();
-        edit.putInt("KILLS", killed);
+        final SharedPreferences.Editor edit = this.getSharedPreferences(Constants.SP_STATS, MODE_PRIVATE).edit();
+        edit.putInt(Constants.SP_KEY_KILLS, killed);
         edit.apply();
     }
 
