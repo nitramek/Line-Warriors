@@ -50,7 +50,7 @@ public class Vector {
 
     public float angleDegrees() {
         float degrees = (float) Math.toDegrees(Math.atan2(this.y(), this.x()));
-        if(this.getQuadrant() > 2){
+        if (this.getQuadrant() > 2) {
             degrees += 360;
         }
 
@@ -62,23 +62,24 @@ public class Vector {
         this.values[1] = this.values[1] * m;
     }
 
-    public int getQuadrant(){
-        if(this.x() > 0 && this.y() > 0){
+    public int getQuadrant() {
+        if (this.x() > 0 && this.y() > 0) {
             return 1;
         }
-        if(this.x() < 0 && this.y() > 0){
+        if (this.x() < 0 && this.y() > 0) {
             return 2;
         }
-        if(this.x() < 0 && this.y() < 0){
+        if (this.x() < 0 && this.y() < 0) {
             return 3;
         }
-        if(this.x() > 0 && this.y() < 0){
+        if (this.x() > 0 && this.y() < 0) {
             return 4;
-        }else{
+        } else {
             return 0;
         }
     }
-    public void revert(){
+
+    public void revert() {
         this.values[0] = -this.values[0];
         this.values[1] = -this.values[1];
     }

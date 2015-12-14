@@ -31,7 +31,6 @@ public class GameView extends GLSurfaceView {
     private InitiationCallback initiationCallback;
 
 
-
     public GameView(Context context, InitiationCallback initiationCallback) throws IOException {
         super(context);
         this.setEGLContextClientVersion(2);
@@ -90,7 +89,8 @@ public class GameView extends GLSurfaceView {
     public GameRenderer getRenderer() {
         return renderer;
     }
-    public interface InitiationCallback{
+
+    public interface InitiationCallback {
         void onInitiation(GameView view);
     }
 }

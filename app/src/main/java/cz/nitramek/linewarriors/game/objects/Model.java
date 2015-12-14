@@ -56,13 +56,13 @@ public abstract class Model {
         this.sprite.setRemove(true);
     }
 
-    public void setPosition(float x, float y){
+    public void setPosition(float x, float y) {
         this.sprite.getModelMatrix().setPosition(x, y);
     }
-    public RectF getBoundingBox(){
+
+    public RectF getBoundingBox() {
         return this.sprite.getModelMatrix().getBoundingBox();
     }
-
 
 
 }

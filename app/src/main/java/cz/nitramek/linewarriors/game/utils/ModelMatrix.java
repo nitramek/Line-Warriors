@@ -39,7 +39,8 @@ public class ModelMatrix {
 
 
     }
-    public void setPosition(float x, float y){
+
+    public void setPosition(float x, float y) {
         Matrix.setIdentityM(this.translateMatrix, 0);
         this.translate(x, y);
     }
